@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+<style>
+.form-group.form-md-line-input {
+    margin: 5px 0 15px;
+}
+</style>
+</head>
+<body>
+    <div class="mt-content-body" layout:fragment="content">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption caption-md">
+                            <i class="icon-bar-chart font-dark hide"></i>
+                            <span class="caption-subject font-green-steel uppercase bold">Historical Trading Data</span>
+                            <span class="caption-helper hide">weekly stats...</span>
+                        </div>
+                        <div class="actions form-inline">
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="history_exchange">
+                                    <option value="1" selected>Kraken</option>
+                                    <option value="2">Binance</option>
+                                    <option value="3">Gemini</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="history_trading_pair">
+                                  <option value="1" selected>BTC/USD</option>
+                                  <option value="2">BTC/CHN</option>
+                                  <option value="3">BTC/EUR</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <div class="input-group input-medium date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                                    <input type="text" class="form-control" name="from" placeholder="From">
+                                    <span class="input-group-addon"> - </span>
+                                    <input type="text" class="form-control" name="to" placeholder="To"> 
+                                </div>
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="form_control_1">
+                                    <option value="1" selected>1 Day</option>
+                                    <option value="2">12 hours</option>
+                                    <option value="3">6 hours</option>
+                                </select>
+                            </div>                            
+                            
+                        </div>
+                    </div>
+                    <div class="portlet-body">    
+                        <div id="history_chart" class="chart " style="height: 400px;"> </div>                    
+                    </div>
+                </div>
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption caption-md">
+                            <i class="icon-bar-chart font-dark hide"></i>
+                            <span class="caption-subject font-green-steel uppercase bold">Strategy Analysis</span>
+                            <span class="caption-helper hide">weekly stats...</span>
+                        </div>
+                        <div class="actions form-inline">
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="form_control_1">
+                                    <option value="1" selected>Strategy1</option>
+                                    <option value="2">Strategy2</option>
+                                    <option value="3">Strategy3</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group form-md-line-input has-info">
+                                <input type="text" class="form-control" id="form_control_1" placeholder="Threshold %">
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <input type="text" class="form-control" id="form_control_1" placeholder="Grouping Size(ms)">
+                            </div>    
+                            <div class="form-group form-md-line-input has-info">
+                                <button type="button" class="btn yellow-crusta">Run strategy</button>                        
+                            </div>    
+                        </div>
+                    </div>
+                    <div class="portlet-body">  
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="well">
+                                    <ul class="list-unstyled">
+                                        <li> Total points: 200 </li>
+                                        <li> Average %: 0.65% </li>
+                                        <li> Average Trading Volume: 15 </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-checkbox ">
+                                    <input type="checkbox" id="checkbox9" class="md-check">
+                                    <label for="checkbox9">
+                                        <span></span>
+                                        <span class="check"></span>
+                                        <span class="box"></span> Display results on chart </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-striped table-bordered table-hover order-column" id="sample_1">
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group form-md-line-input form-inline">
+                            <label>Time range:</label>
+                            <select class="form-control" id="form_control_1">
+                                <option value="1" selected>1 minute</option>
+                                <option value="2">3 minutes</option>
+                                <option value="3">6 minutes</option>
+                            </select>
+                        </div>
+                        <div id="detail_chart" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 267px;"> </div>
+                        
+                        <div class="form-group form-md-line-input form-inline">
+                            <label>Compare with:</label>
+                            <select class="form-control" id="form_control_1">
+                                <option value="1" selected>Kraken</option>
+                                <option value="2">Binance</option>
+                                <option value="3">Gemini</option>
+                            </select>
+                            <select class="form-control" id="form_control_1">
+                                <option value="1" selected>BTC/USD</option>
+                                <option value="2">BTC/CHN</option>
+                                <option value="3">BTC/EUR</option>
+                            </select>
+                        </div>
+                        <div id="compare_chart_1" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 300px;"> </div>
+                        
+                        <div class="form-group form-md-line-input form-inline">
+                            <label>Compare with:</label>
+                            <select class="form-control" id="form_control_1">
+                                <option value="1" selected>Kraken</option>
+                                <option value="2">Binance</option>
+                                <option value="3">Gemini</option>
+                            </select>
+                            <select class="form-control" id="form_control_1">
+                                <option value="1" selected>BTC/USD</option>
+                                <option value="2">BTC/CHN</option>
+                                <option value="3">BTC/EUR</option>
+                            </select>
+                        </div>
+                        <div id="compare_char_2" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 300px;"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<!-- END BODY -->
+</html>
+<script>
+jQuery(document).ready(function() {
+	var sample_data = [
+		{
+			time:'03-01-2018 12:33:10.120',
+			percent:0.55,
+			volume: 10,
+			high: 1004.34,
+			low: 987.45
+		},{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        }
+	];
+
+    var oTable = $('#sample_1').dataTable({
+        searching: false,
+        pageLength: 5,
+        lengthChange: false,
+        data: sample_data,
+        columns : [ {
+            data : 'time',
+            title : 'Time',
+            defaultContent : ''
+        }, {
+            data : 'percent',
+            title : '%',
+            defaultContent : ''
+        }, {
+            data : 'volume',
+            title : 'Trading Volume',
+            defaultContent : ''
+        }, {
+            data : 'high',
+            title : 'High Price',
+            defaultContent : ''
+        }, {
+            data : 'low',
+            title : 'Low Price',
+            defaultContent : ''
+        }]
+    });
+    
+    var chartData = [];
+    generateChartData();
+
+    function generateChartData() {
+        var firstDate = new Date(2012, 0, 1);
+        firstDate.setDate(firstDate.getDate() - 500);
+        firstDate.setHours(0, 0, 0, 0);
+
+        for (var i = 0; i < 500; i++) {
+            var newDate = new Date(firstDate);
+            newDate.setDate(newDate.getDate() + i);
+
+            var a = Math.round(Math.random() * (40 + i)) + 100 + i;
+            var b = Math.round(Math.random() * 100000000);
+
+            chartData.push({
+                date: newDate,
+                value: a,
+                volume: b
+            });
+        }
+    }
+    
+    var chart = AmCharts.makeChart("history_chart", {
+        type: "stock",
+        "theme": "light",
+        pathToImages: App.getGlobalPluginsPath() + "amcharts/amcharts/images/",
+        "fontFamily": 'Open Sans',
+        
+        "color":    '#888',
+        dataSets: [{
+            color: "#b0de09",
+            fieldMappings: [{
+                fromField: "value",
+                toField: "value"
+            }, {
+                fromField: "volume",
+                toField: "volume"
+            }],
+            dataProvider: chartData,
+            categoryField: "date",
+            // EVENTS
+            stockEvents: [{
+                date: new Date(2010, 8, 19),
+                type: "sign",
+                backgroundColor: "#85CDE6",
+                graph: "g1",
+                text: "S",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2010, 10, 19),
+                type: "flag",
+                backgroundColor: "#FFFFFF",
+                backgroundAlpha: 0.5,
+                graph: "g1",
+                text: "F",
+                description: "Some longerntext can alson be added"
+            }, {
+                date: new Date(2010, 11, 10),
+                showOnAxis: true,
+                backgroundColor: "#85CDE6",
+                type: "pin",
+                text: "X",
+                graph: "g1",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2010, 11, 26),
+                showOnAxis: true,
+                backgroundColor: "#85CDE6",
+                type: "pin",
+                text: "Z",
+                graph: "g1",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 0, 3),
+                type: "sign",
+                backgroundColor: "#85CDE6",
+                graph: "g1",
+                text: "U",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 1, 6),
+                type: "sign",
+                graph: "g1",
+                text: "D",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 3, 5),
+                type: "sign",
+                graph: "g1",
+                text: "L",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 3, 5),
+                type: "sign",
+                graph: "g1",
+                text: "R",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 5, 15),
+                type: "arrowUp",
+                backgroundColor: "#00CC00",
+                graph: "g1",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 6, 25),
+                type: "arrowDown",
+                backgroundColor: "#CC0000",
+                graph: "g1",
+                description: "This is description of an event"
+            }, {
+                date: new Date(2011, 8, 1),
+                type: "text",
+                graph: "g1",
+                text: "Longer text can\nalso be displayed",
+                description: "This is description of an event"
+            }]
+        }],
+
+
+        panels: [{
+            title: "Value",
+            percentHeight: 70,
+
+            stockGraphs: [{
+                id: "g1",
+                valueField: "value"
+            }],
+
+            stockLegend: {
+                valueTextRegular: " ",
+                markerType: "none"
+            }
+        }],
+
+        chartScrollbarSettings: {
+            graph: "g1"
+        },
+
+        chartCursorSettings: {
+            valueBalloonsEnabled: true,
+            graphBulletSize: 1,
+            valueLineBalloonEnabled:true,
+            valueLineEnabled:true,
+            valueLineAlpha:0.5
+        },
+
+        periodSelector: {
+            periods: [{
+                period: "DD",
+                count: 10,
+                label: "10 days"
+            }, {
+                period: "MM",
+                count: 1,
+                label: "1 month"
+            }, {
+                period: "YYYY",
+                count: 1,
+                label: "1 year"
+            }, {
+                period: "YTD",
+                label: "YTD"
+            }, {
+                period: "MAX",
+                label: "MAX"
+            }]
+        },
+
+        panelsSettings: {
+            usePrefixes: true
+        }
+    });
+
+    $('#history_chart').closest('.portlet').find('.fullscreen').click(function() {
+        chart.invalidateSize();
+    });
+    
+});
+
+</script>
+
