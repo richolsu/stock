@@ -93,12 +93,9 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="md-checkbox ">
-                                    <input type="checkbox" id="checkbox9" class="md-check">
-                                    <label for="checkbox9">
-                                        <span></span>
-                                        <span class="check"></span>
-                                        <span class="box"></span> Display results on chart </label>
+                                <div class="md-checkbox">
+                                    
+                                    <label class="mt-checkbox">Display results on chart <input type="checkbox" id="display_on_chart" checked><span></span></label>
                                 </div>
                             </div>
                         </div>
@@ -110,7 +107,7 @@
                         </div>
                         <div class="form-group form-md-line-input form-inline">
                             <label>Time range:</label>
-                            <select class="form-control" id="form_control_1">
+                            <select class="form-control" id="time_range_select">
                                 <option value="1" selected>1 minute</option>
                                 <option value="2">3 minutes</option>
                                 <option value="3">6 minutes</option>
@@ -120,12 +117,12 @@
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
-                            <select class="form-control" id="form_control_1">
+                            <select class="form-control" id="compare1_exchange">
                                 <option value="1" selected>Kraken</option>
                                 <option value="2">Binance</option>
                                 <option value="3">Gemini</option>
                             </select>
-                            <select class="form-control" id="form_control_1">
+                            <select class="form-control" id="compare1_trading_pair">
                                 <option value="1" selected>BTC/USD</option>
                                 <option value="2">BTC/CHN</option>
                                 <option value="3">BTC/EUR</option>
@@ -135,18 +132,18 @@
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
-                            <select class="form-control" id="form_control_1">
+                            <select class="form-control" id="compare2_exchange">
                                 <option value="1" selected>Kraken</option>
                                 <option value="2">Binance</option>
                                 <option value="3">Gemini</option>
                             </select>
-                            <select class="form-control" id="form_control_1">
+                            <select class="form-control" id="compare2_trading_pair">
                                 <option value="1" selected>BTC/USD</option>
                                 <option value="2">BTC/CHN</option>
                                 <option value="3">BTC/EUR</option>
                             </select>
                         </div>
-                        <div id="compare_char_2" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 300px;"> </div>
+                        <div id="compare_chart_2" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 300px;"> </div>
                     </div>
                 </div>
             </div>
@@ -422,6 +419,8 @@ jQuery(document).ready(function() {
     });
     
     $('#run_strategy').click(function() {
+    	alert("run strategy");
+    	/*
     	$.ajax({
           type: "POST",
           url: url,
@@ -429,6 +428,15 @@ jQuery(document).ready(function() {
           success: success,
           dataType: dataType
         });
+    	*/
+    })
+    
+    $('#compare1_exchange, #compare1_trading_pair').change(function() {
+        alert("compare1");
+    })
+    
+    $('#compare2_exchange, #compare2_trading_pair').change(function() {
+        alert("compare2");
     })
     
 });
