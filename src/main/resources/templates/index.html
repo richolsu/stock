@@ -35,13 +35,13 @@
                             </div>
                             <div class="form-group form-md-line-input has-info">
                                 <div class="input-group input-medium date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
-                                    <input type="text" class="form-control" name="from" placeholder="From">
+                                    <input type="text" class="form-control" id="history_from" name="from" placeholder="From">
                                     <span class="input-group-addon"> - </span>
-                                    <input type="text" class="form-control" name="to" placeholder="To"> 
+                                    <input type="text" class="form-control" id="history_to" name="to" placeholder="To"> 
                                 </div>
                             </div>
                             <div class="form-group form-md-line-input has-info">
-                                <select class="form-control" id="form_control_1">
+                                <select class="form-control" id="history_granularity">
                                     <option value="1" selected>1 Day</option>
                                     <option value="2">12 hours</option>
                                     <option value="3">6 hours</option>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="actions form-inline">
                             <div class="form-group form-md-line-input has-info">
-                                <select class="form-control" id="form_control_1">
+                                <select class="form-control" id="analytics_strategy">
                                     <option value="1" selected>Strategy1</option>
                                     <option value="2">Strategy2</option>
                                     <option value="3">Strategy3</option>
@@ -71,13 +71,13 @@
                             </div>
 
                             <div class="form-group form-md-line-input has-info">
-                                <input type="text" class="form-control" id="form_control_1" placeholder="Threshold %">
+                                <input type="text" class="form-control" id="analytics_threshold" placeholder="Threshold %">
                             </div>
                             <div class="form-group form-md-line-input has-info">
-                                <input type="text" class="form-control" id="form_control_1" placeholder="Grouping Size(ms)">
+                                <input type="text" class="form-control" id="analytics_group_size" placeholder="Grouping Size(ms)">
                             </div>    
                             <div class="form-group form-md-line-input has-info">
-                                <button type="button" class="btn yellow-crusta">Run strategy</button>                        
+                                <button type="button" id="run_strategy" class="btn yellow-crusta">Run strategy</button>                        
                             </div>    
                         </div>
                     </div>
@@ -86,9 +86,9 @@
                             <div class="col-md-4">
                                 <div class="well">
                                     <ul class="list-unstyled">
-                                        <li> Total points: 200 </li>
-                                        <li> Average %: 0.65% </li>
-                                        <li> Average Trading Volume: 15 </li>
+                                        <li > Total points: <span id="result_total">200 </span></li>
+                                        <li> Average %: <span id="result_average_percent">0.65</span>% </li>
+                                        <li> Average Trading Volume: <span id="result_average_volume">15</span> </li>
                                     </ul>
                                 </div>
                             </div>
@@ -420,6 +420,16 @@ jQuery(document).ready(function() {
     $('#history_chart').closest('.portlet').find('.fullscreen').click(function() {
         chart.invalidateSize();
     });
+    
+    $('#run_strategy').click(function() {
+    	$.ajax({
+          type: "POST",
+          url: url,
+          data: data,
+          success: success,
+          dataType: dataType
+        });
+    })
     
 });
 
