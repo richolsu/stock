@@ -42,9 +42,11 @@
                             </div>
                             <div class="form-group form-md-line-input has-info">
                                 <select class="form-control" id="history_granularity">
-                                    <option value="24">1 Day</option>
-                                    <option value="6">6 hours</option>
-                                    <option value="1" selected>1 hour</option>
+                                    <option value="1440">1 Day</option>
+                                    <option value="360" selected>6 hours</option>
+                                    <option value="60">1 hour</option>
+                                    <option value="15">15 min</option>
+                                    <option value="1">1 min</option>
                                 </select>
                             </div>                            
                             
@@ -114,9 +116,10 @@
                         <div class="form-group form-md-line-input form-inline">
                             <label>Time range:</label>
                             <select class="form-control" id="time_range_select">
-                                <option value="1" selected>1 minute</option>
-                                <option value="2">3 minutes</option>
-                                <option value="3">6 minutes</option>
+                                <option value="6">6 seconds</option>
+                                <option value="60" selected>1 minute</option>
+                                <option value="180">3 minutes</option>
+                                <option value="360">6 minutes</option>
                             </select>
                         </div>
                         <div id="detail_chart" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 267px;"> </div>

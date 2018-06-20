@@ -72,7 +72,7 @@ public class HomeController {
 		// PageRequest request = PageRequest.of(0, 1000);
 		// Page<Ohlc> result = ohlcRepository.findAll(example, request);
 
-		Long granularityMs = Long.parseLong(granularityInMs) * 3600000;
+		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
 		logger.info("granularityMs= " + granularityMs);
 		List<Ohlc> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 		logger.info("result=" + result.size());
