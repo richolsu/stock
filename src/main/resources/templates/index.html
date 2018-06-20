@@ -21,16 +21,16 @@
                         <div class="actions form-inline">
                             <div class="form-group form-md-line-input has-info">
                                 <select class="form-control" id="history_exchange">
-                                    <option value="1" selected>Kraken</option>
-                                    <option value="2">Binance</option>
-                                    <option value="3">Gemini</option>
+                                    <option value="gdax" selected>Kraken</option>
+                                    <option value="gdax">Binance</option>
+                                    <option value="gdax">Gemini</option>
                                 </select>
                             </div>
                             <div class="form-group form-md-line-input has-info">
                                 <select class="form-control" id="history_trading_pair">
-                                  <option value="1" selected>BTC/USD</option>
-                                  <option value="2">BTC/CHN</option>
-                                  <option value="3">BTC/EUR</option>
+                                  <option value="BTC-USD" selected>BTC-USD</option>
+                                  <option value="ETH-BTC">ETH-BTC</option>
+                                  <option value="ETH-USD">ETH-USD</option>
                                 </select>
                             </div>
                             <div class="form-group form-md-line-input has-info">
@@ -42,9 +42,9 @@
                             </div>
                             <div class="form-group form-md-line-input has-info">
                                 <select class="form-control" id="history_granularity">
-                                    <option value="1" selected>1 Day</option>
-                                    <option value="2">12 hours</option>
-                                    <option value="3">6 hours</option>
+                                    <option value="24">1 Day</option>
+                                    <option value="6">6 hours</option>
+                                    <option value="1" selected>1 hour</option>
                                 </select>
                             </div>                            
                             
@@ -152,8 +152,13 @@
 </body>
 <!-- END BODY -->
 </html>
-<script>
+<script th:inline="javascript">
+var url = /*[[@{/history_data}]]*/'';
+
 jQuery(document).ready(function() {
+	var today = new Date();
+	$('#history_to').datepicker( "setDate", today);
+	$('#history_from').datepicker("setDate", new Date(today.setMonth(today.getMonth() - 3)));
 	var sample_data = [
 		{
 			time:'03-01-2018 12:33:10.120',
@@ -240,195 +245,200 @@ jQuery(document).ready(function() {
         }]
     });
     
-    var chartData = [];
-    generateChartData();
-
-    function generateChartData() {
-        var firstDate = new Date(2012, 0, 1);
-        firstDate.setDate(firstDate.getDate() - 500);
-        firstDate.setHours(0, 0, 0, 0);
-
-        for (var i = 0; i < 500; i++) {
-            var newDate = new Date(firstDate);
-            newDate.setDate(newDate.getDate() + i);
-
-            var a = Math.round(Math.random() * (40 + i)) + 100 + i;
-            var b = Math.round(Math.random() * 100000000);
-
-            chartData.push({
-                date: newDate,
-                value: a,
-                volume: b
-            });
-        }
-    }
-    
-    var chart = AmCharts.makeChart("history_chart", {
-        type: "stock",
-        "theme": "light",
-        pathToImages: App.getGlobalPluginsPath() + "amcharts/amcharts/images/",
-        "fontFamily": 'Open Sans',
-        
-        "color":    '#888',
-        dataSets: [{
-            color: "#b0de09",
-            fieldMappings: [{
-                fromField: "value",
-                toField: "value"
-            }, {
-                fromField: "volume",
-                toField: "volume"
-            }],
-            dataProvider: chartData,
-            categoryField: "date",
-            // EVENTS
-            stockEvents: [{
-                date: new Date(2010, 8, 19),
-                type: "sign",
-                backgroundColor: "#85CDE6",
-                graph: "g1",
-                text: "S",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2010, 10, 19),
-                type: "flag",
-                backgroundColor: "#FFFFFF",
-                backgroundAlpha: 0.5,
-                graph: "g1",
-                text: "F",
-                description: "Some longerntext can alson be added"
-            }, {
-                date: new Date(2010, 11, 10),
-                showOnAxis: true,
-                backgroundColor: "#85CDE6",
-                type: "pin",
-                text: "X",
-                graph: "g1",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2010, 11, 26),
-                showOnAxis: true,
-                backgroundColor: "#85CDE6",
-                type: "pin",
-                text: "Z",
-                graph: "g1",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 0, 3),
-                type: "sign",
-                backgroundColor: "#85CDE6",
-                graph: "g1",
-                text: "U",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 1, 6),
-                type: "sign",
-                graph: "g1",
-                text: "D",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 3, 5),
-                type: "sign",
-                graph: "g1",
-                text: "L",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 3, 5),
-                type: "sign",
-                graph: "g1",
-                text: "R",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 5, 15),
-                type: "arrowUp",
-                backgroundColor: "#00CC00",
-                graph: "g1",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 6, 25),
-                type: "arrowDown",
-                backgroundColor: "#CC0000",
-                graph: "g1",
-                description: "This is description of an event"
-            }, {
-                date: new Date(2011, 8, 1),
-                type: "text",
-                graph: "g1",
-                text: "Longer text can\nalso be displayed",
-                description: "This is description of an event"
-            }]
-        }],
-
-
-        panels: [{
-            title: "Value",
-            percentHeight: 70,
-
-            stockGraphs: [{
-                id: "g1",
-                valueField: "value"
-            }],
-
-            stockLegend: {
-                valueTextRegular: " ",
-                markerType: "none"
-            }
-        }],
-
-        chartScrollbarSettings: {
-            graph: "g1"
-        },
-
-        chartCursorSettings: {
-            valueBalloonsEnabled: true,
-            graphBulletSize: 1,
-            valueLineBalloonEnabled:true,
-            valueLineEnabled:true,
-            valueLineAlpha:0.5
-        },
-
-        periodSelector: {
-            periods: [{
-                period: "DD",
-                count: 10,
-                label: "10 days"
-            }, {
-                period: "MM",
-                count: 1,
-                label: "1 month"
-            }, {
-                period: "YYYY",
-                count: 1,
-                label: "1 year"
-            }, {
-                period: "YTD",
-                label: "YTD"
-            }, {
-                period: "MAX",
-                label: "MAX"
-            }]
-        },
-
-        panelsSettings: {
-            usePrefixes: true
-        }
+    AmCharts.ready(function () {
+        createStockChart();
     });
+
+    var chartData = [];
+
+    
+
+    var chart, dataSet;
+    function createStockChart() {
+        chart = new AmCharts.AmStockChart();
+
+
+        // DATASET //////////////////////////////////////////
+        dataSet = new AmCharts.DataSet();
+        dataSet.fieldMappings = [{
+            fromField: "open",
+            toField: "open"
+        }, {
+            fromField: "close",
+            toField: "close"
+        }, {
+            fromField: "high",
+            toField: "high"
+        }, {
+            fromField: "low",
+            toField: "low"
+        }, {
+            fromField: "volume",
+            toField: "volume"
+        }, {
+            fromField: "value",
+            toField: "value"
+        }];
+        dataSet.color = "#7f8da9";
+        dataSet.dataProvider = chartData;
+        dataSet.title = "Stock";
+        dataSet.categoryField = "date";
+
+         chart.dataSets = [dataSet];
+
+        // PANELS ///////////////////////////////////////////
+        var stockPanel = new AmCharts.StockPanel();
+        stockPanel.title = "Value";
+        stockPanel.showCategoryAxis = false;
+        stockPanel.percentHeight = 70;
+
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.dashLength = 5;
+        stockPanel.addValueAxis(valueAxis);
+
+        stockPanel.categoryAxis.dashLength = 5;
+
+        // graph of first stock panel
+        var graph = new AmCharts.StockGraph();
+        graph.type = "candlestick";
+        graph.openField = "open";
+        graph.closeField = "close";
+        graph.highField = "high";
+        graph.lowField = "low";
+        graph.valueField = "close";
+        graph.lineColor = "#7f8da9";
+        graph.fillColors = "#7f8da9";
+        graph.negativeLineColor = "#db4c3c";
+        graph.negativeFillColors = "#db4c3c";
+        graph.proCandlesticks = true;
+        graph.fillAlphas = 1;
+        graph.useDataSetColors = false;
+        graph.comparable = true;
+        graph.compareField = "value";
+        graph.showBalloon = false;
+        stockPanel.addStockGraph(graph);
+
+        var stockLegend = new AmCharts.StockLegend();
+        stockLegend.valueTextRegular = undefined;
+        //stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
+        stockPanel.stockLegend = stockLegend;
+
+        var chartCursor = new AmCharts.ChartCursor();
+        chartCursor.valueLineEnabled = true;
+        chartCursor.valueLineAxis = valueAxis;
+        stockPanel.chartCursor = chartCursor;
+
+        var stockPanel2 = new AmCharts.StockPanel();
+        stockPanel2.title = "Volume";
+        stockPanel2.percentHeight = 30;
+        stockPanel2.marginTop = 1;
+        stockPanel2.showCategoryAxis = true;
+
+        var valueAxis2 = new AmCharts.ValueAxis();
+        valueAxis2.dashLength = 5;
+        stockPanel2.addValueAxis(valueAxis2);
+
+        stockPanel2.categoryAxis.dashLength = 5;
+
+        var graph2 = new AmCharts.StockGraph();
+        graph2.valueField = "volume";
+        graph2.type = "column";
+        graph2.showBalloon = false;
+        graph2.fillAlphas = 1;
+        stockPanel2.addStockGraph(graph2);
+
+        var legend2 = new AmCharts.StockLegend();
+        legend2.markerType = "none";
+        legend2.markerSize = 0;
+        legend2.labelText = "";
+        //legend2.periodValueTextRegular = "[[value.close]]";
+        stockPanel2.stockLegend = legend2;
+
+        var chartCursor2 = new AmCharts.ChartCursor();
+        chartCursor2.valueLineEnabled = true;
+        chartCursor2.valueLineAxis = valueAxis2;
+        stockPanel2.chartCursor = chartCursor2;
+
+        chart.panels = [stockPanel, stockPanel2];
+
+
+        // OTHER SETTINGS ////////////////////////////////////
+        var sbsettings = new AmCharts.ChartScrollbarSettings();
+        sbsettings.graph = graph;
+        sbsettings.graphType = "line";
+        sbsettings.usePeriod = "WW";
+        sbsettings.updateOnReleaseOnly = false;
+        chart.chartScrollbarSettings = sbsettings;
+
+
+        // PERIOD SELECTOR ///////////////////////////////////
+        var periodSelector = new AmCharts.PeriodSelector();
+        periodSelector.position = "bottom";
+        periodSelector.periods = [{
+            period: "DD",
+            count: 10,
+            label: "10 days"
+        }, {
+            period: "MM",
+            selected: true,
+            count: 1,
+            label: "1 month"
+        }, {
+            period: "YYYY",
+            count: 1,
+            label: "1 year"
+        }, {
+            period: "YTD",
+            label: "YTD"
+        }, {
+            period: "MAX",
+            label: "MAX"
+        }];
+        chart.periodSelector = periodSelector;
+
+        chart.write('history_chart');
+    }
 
     $('#history_chart').closest('.portlet').find('.fullscreen').click(function() {
         chart.invalidateSize();
     });
     
-    $('#run_strategy').click(function() {
-    	alert("run strategy");
-    	/*
-    	$.ajax({
+    function refresh_history_chart() {
+
+        $.ajax({
           type: "POST",
           url: url,
-          data: data,
-          success: success,
-          dataType: dataType
+          data:  {
+    		  exchange: $('#history_exchange').val(),
+    		  symbol: $('#history_trading_pair').val(),
+    		  granularityInMs: $('#history_granularity').val(),
+    		  start_date: $('#history_from').val(),
+    		  end_date: $('#history_to').val()
+          },
+          success: function(data, res){
+        	  $.each(data, function(key, item){
+        		  var date = new Date(item.id.date);
+        		  delete item.id;
+        		  item.date = date;
+        	  })
+        	  
+        	  dataSet.dataProvider = data;
+              chart.validateData();
+    
+
+          },
         });
-    	*/
+
+    }
+    
+    $('#run_strategy').click(function() {
+    	alert("run_strategy");
+    	
+    })
+    
+    $('#history_exchange, #history_trading_pair, #history_granularity').change(function() {
+        
+        refresh_history_chart();
     })
     
     $('#compare1_exchange, #compare1_trading_pair').change(function() {
@@ -437,6 +447,14 @@ jQuery(document).ready(function() {
     
     $('#compare2_exchange, #compare2_trading_pair').change(function() {
         alert("compare2");
+    })
+    
+    $('#display_on_chart').change(function(){
+    	alert("display result on chart");
+    })
+    
+    $('#time_range_select').change(function() {
+    	alert("time range");
     })
     
 });

@@ -1,8 +1,5 @@
 package com.trading.strategy.analytics.model;
 
-import java.io.Serializable;
-
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -74,49 +71,6 @@ public class Ohlc {
 
 	public void setCount(Long count) {
 		this.count = count;
-	}
-
-}
-
-@Embeddable
-class OhlcId implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	private Long granularityInMs;
-	private String exchange;
-	private String symbol;
-	private Long startMs;
-
-	public Long getGranularityInMs() {
-		return granularityInMs;
-	}
-
-	public void setGranularityInMs(Long granularityInMs) {
-		this.granularityInMs = granularityInMs;
-	}
-
-	public String getExchange() {
-		return exchange;
-	}
-
-	public void setExchange(String exchange) {
-		this.exchange = exchange;
-	}
-
-	public String getSymbol() {
-		return symbol;
-	}
-
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
-
-	public Long getStartMs() {
-		return startMs;
-	}
-
-	public void setStartMs(Long startMs) {
-		this.startMs = startMs;
 	}
 
 }
