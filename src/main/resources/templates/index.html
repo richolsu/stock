@@ -62,7 +62,7 @@
                             <span class="caption-helper hide">weekly stats...</span>
                         </div>
                         <div class="actions form-inline">
-                            <div class="form-group form-md-line-input has-info">
+                            <div class="form-group form-md-line-input has-info margin-right-10">
                                 <select class="form-control" id="analytics_strategy">
                                     <option value="1" selected>Strategy1</option>
                                     <option value="2">Strategy2</option>
@@ -70,13 +70,19 @@
                                 </select>
                             </div>
 
-                            <div class="form-group form-md-line-input has-info">
-                                <input type="text" class="form-control" id="analytics_threshold" placeholder="Threshold %">
+                            <div class="form-group  has-info margin-right-10">
+                                <label>Threshold %:</label>
                             </div>
-                            <div class="form-group form-md-line-input has-info">
-                                <input type="text" class="form-control" id="analytics_group_size" placeholder="Grouping Size(ms)">
+                            <div class="form-group form-md-line-input has-info margin-right-10">
+                                <input type="text" class="form-control" id="analytics_threshold" value="0.5" style="width:50px">
+                            </div>
+                            <div class="form-group  has-info margin-right-10">
+                                <label>Grouping Size(ms):</label>
+                            </div>                            
+                            <div class="form-group form-md-line-input has-info margin-right-10">
+                                <input type="text" class="form-control" id="analytics_group_size"  style="width:60px" value="10">
                             </div>    
-                            <div class="form-group form-md-line-input has-info">
+                            <div class="form-group form-md-line-input has-info ">
                                 <button type="button" id="run_strategy" class="btn yellow-crusta">Run strategy</button>                        
                             </div>    
                         </div>
@@ -397,6 +403,8 @@ jQuery(document).ready(function() {
         chart.periodSelector = periodSelector;
 
         chart.write('history_chart');
+        
+        refresh_history_chart();
     }
 
     $('#history_chart').closest('.portlet').find('.fullscreen').click(function() {
