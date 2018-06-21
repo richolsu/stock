@@ -5,6 +5,12 @@
 .form-group.form-md-line-input {
     margin: 5px 0 15px;
 }
+table.dataTable td.sorting_1, table.dataTable td.sorting_2, table.dataTable td.sorting_3, table.dataTable th.sorting_1, table.dataTable th.sorting_2, table.dataTable th.sorting_3 {
+    background: inherit!important
+}
+table.dataTable tbody tr.selected {
+    background-color: #36D7B7!important
+}
 </style>
 </head>
 <body>
@@ -66,9 +72,9 @@
                         <div class="actions form-inline">
                             <div class="form-group form-md-line-input has-info margin-right-10">
                                 <select class="form-control" id="analytics_strategy">
-                                    <option value="1" selected>Strategy1</option>
-                                    <option value="2">Strategy2</option>
-                                    <option value="3">Strategy3</option>
+                                    <option value="needle" selected>Strategy1</option>
+                                    <option value="needle">Strategy2</option>
+                                    <option value="needle">Strategy3</option>
                                 </select>
                             </div>
 
@@ -82,7 +88,11 @@
                                 <label>Grouping Size(ms):</label>
                             </div>                            
                             <div class="form-group form-md-line-input has-info margin-right-10">
-                                <input type="text" class="form-control" id="analytics_group_size"  style="width:60px" value="10">
+                                <input type="hidden" class="form-control" id="analytics_group_size22"  style="width:60px" value="10">
+                                <select class="form-control" id="analytics_group_size">
+                                    <option value="1000" selected>1000</option>
+                                    <option value="100">100</option>
+                                </select>
                             </div>    
                             <div class="form-group form-md-line-input has-info ">
                                 <button type="button" id="run_strategy" class="btn yellow-crusta">Run strategy</button>                        
@@ -109,7 +119,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-striped table-bordered table-hover order-column" id="sample_1">
+                                <table class="table table-bordered nowrap table-striped" id="sample_1">
                                 </table>
                             </div>
                         </div>
@@ -122,7 +132,7 @@
                                 <option value="360">6 minutes</option>
                             </select>
                         </div>
-                        <div id="detail_chart" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 267px;"> </div>
+                        <div id="detail_chart" class="chart" style="height: 267px;"> </div>
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
@@ -226,9 +236,10 @@ jQuery(document).ready(function() {
         }
 	];
 
-    var oTable = $('#sample_1').dataTable({
+    var oTable = $('#sample_1').DataTable({
         searching: false,
         pageLength: 5,
+        select: true,
         lengthChange: false,
         data: sample_data,
         columns : [ {
@@ -252,24 +263,24 @@ jQuery(document).ready(function() {
             title : 'Low Price',
             defaultContent : ''
         }]
+    }).on('select', function ( e, dt, type, cell, originalEvent ) {
+      refresh_detail_chart();
     });
     
     AmCharts.ready(function () {
-        createStockChart();
+    	createHistoryChart();
+    	createDetailChart();
     });
 
-    var chartData = [];
 
-    
-
-    var chart, dataSet;
-    function createStockChart() {
-        chart = new AmCharts.AmStockChart();
+    var history_chart, history_dataSet, detail_chart, detail_dataSet;
+    function createHistoryChart() {
+    	history_chart = new AmCharts.AmStockChart();
 
 
         // DATASET //////////////////////////////////////////
-        dataSet = new AmCharts.DataSet();
-        dataSet.fieldMappings = [{
+        history_dataSet = new AmCharts.DataSet();
+        history_dataSet.fieldMappings = [{
             fromField: "open",
             toField: "open"
         }, {
@@ -288,12 +299,12 @@ jQuery(document).ready(function() {
             fromField: "value",
             toField: "value"
         }];
-        dataSet.color = "#7f8da9";
-        dataSet.dataProvider = chartData;
-        dataSet.title = "Stock";
-        dataSet.categoryField = "date";
+        history_dataSet.color = "#7f8da9";
+        history_dataSet.dataProvider = [];
+        history_dataSet.title = "Stock";
+        history_dataSet.categoryField = "date";
 
-         chart.dataSets = [dataSet];
+        history_chart.dataSets = [history_dataSet];
 
         // PANELS ///////////////////////////////////////////
         var stockPanel = new AmCharts.StockPanel();
@@ -368,7 +379,7 @@ jQuery(document).ready(function() {
         chartCursor2.valueLineAxis = valueAxis2;
         stockPanel2.chartCursor = chartCursor2;
 
-        chart.panels = [stockPanel, stockPanel2];
+        history_chart.panels = [stockPanel, stockPanel2];
 
 
         // OTHER SETTINGS ////////////////////////////////////
@@ -377,7 +388,7 @@ jQuery(document).ready(function() {
         sbsettings.graphType = "line";
         sbsettings.usePeriod = "WW";
         sbsettings.updateOnReleaseOnly = false;
-        chart.chartScrollbarSettings = sbsettings;
+        history_chart.chartScrollbarSettings = sbsettings;
 
 
         // PERIOD SELECTOR ///////////////////////////////////
@@ -403,11 +414,157 @@ jQuery(document).ready(function() {
             period: "MAX",
             label: "MAX"
         }];
-        chart.periodSelector = periodSelector;
+        history_chart.periodSelector = periodSelector;
 
-        chart.write('history_chart');
+        history_chart.write('history_chart');
         
         refresh_history_chart();
+    }
+    
+    function createDetailChart() {
+        detail_chart = new AmCharts.AmStockChart();
+
+
+        // DATASET //////////////////////////////////////////
+        detail_dataSet = new AmCharts.DataSet();
+        detail_dataSet.fieldMappings = [{
+            fromField: "open",
+            toField: "open"
+        }, {
+            fromField: "close",
+            toField: "close"
+        }, {
+            fromField: "high",
+            toField: "high"
+        }, {
+            fromField: "low",
+            toField: "low"
+        }, {
+            fromField: "volume",
+            toField: "volume"
+        }, {
+            fromField: "value",
+            toField: "value"
+        }];
+        detail_dataSet.color = "#7f8da9";
+        detail_dataSet.dataProvider = [];
+        detail_dataSet.title = "Stock";
+        detail_dataSet.categoryField = "date";
+
+        detail_chart.dataSets = [detail_dataSet];
+
+        // PANELS ///////////////////////////////////////////
+        var stockPanel = new AmCharts.StockPanel();
+        stockPanel.title = "Value";
+        stockPanel.showCategoryAxis = false;
+        stockPanel.percentHeight = 70;
+
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.dashLength = 5;
+        stockPanel.addValueAxis(valueAxis);
+
+        stockPanel.categoryAxis.dashLength = 5;
+
+        // graph of first stock panel
+        var graph = new AmCharts.StockGraph();
+        graph.type = "candlestick";
+        graph.openField = "open";
+        graph.closeField = "close";
+        graph.highField = "high";
+        graph.lowField = "low";
+        graph.valueField = "close";
+        graph.lineColor = "#7f8da9";
+        graph.fillColors = "#7f8da9";
+        graph.negativeLineColor = "#db4c3c";
+        graph.negativeFillColors = "#db4c3c";
+        graph.proCandlesticks = true;
+        graph.fillAlphas = 1;
+        graph.useDataSetColors = false;
+        graph.comparable = true;
+        graph.compareField = "value";
+        graph.showBalloon = false;
+        stockPanel.addStockGraph(graph);
+
+        var stockLegend = new AmCharts.StockLegend();
+        stockLegend.valueTextRegular = undefined;
+        //stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
+        stockPanel.stockLegend = stockLegend;
+
+        var chartCursor = new AmCharts.ChartCursor();
+        chartCursor.valueLineEnabled = true;
+        chartCursor.valueLineAxis = valueAxis;
+        stockPanel.chartCursor = chartCursor;
+
+        var stockPanel2 = new AmCharts.StockPanel();
+        stockPanel2.title = "Volume";
+        stockPanel2.percentHeight = 30;
+        stockPanel2.marginTop = 1;
+        stockPanel2.showCategoryAxis = true;
+
+        var valueAxis2 = new AmCharts.ValueAxis();
+        valueAxis2.dashLength = 5;
+        stockPanel2.addValueAxis(valueAxis2);
+
+        stockPanel2.categoryAxis.dashLength = 5;
+
+        var graph2 = new AmCharts.StockGraph();
+        graph2.valueField = "volume";
+        graph2.type = "column";
+        graph2.showBalloon = false;
+        graph2.fillAlphas = 1;
+        stockPanel2.addStockGraph(graph2);
+
+        var legend2 = new AmCharts.StockLegend();
+        legend2.markerType = "none";
+        legend2.markerSize = 0;
+        legend2.labelText = "";
+        //legend2.periodValueTextRegular = "[[value.close]]";
+        stockPanel2.stockLegend = legend2;
+
+        var chartCursor2 = new AmCharts.ChartCursor();
+        chartCursor2.valueLineEnabled = true;
+        chartCursor2.valueLineAxis = valueAxis2;
+        stockPanel2.chartCursor = chartCursor2;
+
+        detail_chart.panels = [stockPanel, stockPanel2];
+
+
+        // OTHER SETTINGS ////////////////////////////////////
+        var sbsettings = new AmCharts.ChartScrollbarSettings();
+        sbsettings.graph = graph;
+        sbsettings.graphType = "line";
+        sbsettings.usePeriod = "WW";
+        sbsettings.updateOnReleaseOnly = false;
+        detail_chart.chartScrollbarSettings = sbsettings;
+
+
+        // PERIOD SELECTOR ///////////////////////////////////
+        var periodSelector = new AmCharts.PeriodSelector();
+        periodSelector.position = "bottom";
+        periodSelector.periods = [{
+            period: "DD",
+            count: 10,
+            label: "10 days"
+        }, {
+            period: "MM",
+            selected: true,
+            count: 1,
+            label: "1 month"
+        }, {
+            period: "YYYY",
+            count: 1,
+            label: "1 year"
+        }, {
+            period: "YTD",
+            label: "YTD"
+        }, {
+            period: "MAX",
+            label: "MAX"
+        }];
+        detail_chart.periodSelector = periodSelector;
+
+        detail_chart.write('detail_chart');
+
     }
 
     $('#history_chart').closest('.portlet').find('.fullscreen').click(function() {
@@ -433,8 +590,36 @@ jQuery(document).ready(function() {
         		  item.date = date;
         	  })
         	  
-        	  dataSet.dataProvider = data;
-              chart.validateData();
+        	  history_dataSet.dataProvider = data;
+              history_chart.validateData();
+    
+
+          },
+        });
+
+    }
+    
+    function refresh_detail_chart() {
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          data:  {
+              exchange: $('#history_exchange').val(),
+              symbol: $('#history_trading_pair').val(),
+              granularityInMs: $('#history_granularity').val(),
+              start_date: $('#history_from').val(),
+              end_date: $('#history_to').val()
+          },
+          success: function(data, res){
+              $.each(data, function(key, item){
+                  var date = new Date(item.id.date);
+                  delete item.id;
+                  item.date = date;
+              })
+              
+              detail_dataSet.dataProvider = data;
+              detail_chart.validateData();
     
 
           },
@@ -467,6 +652,8 @@ jQuery(document).ready(function() {
     $('#time_range_select').change(function() {
     	alert("time range");
     })
+    
+
     
 });
 

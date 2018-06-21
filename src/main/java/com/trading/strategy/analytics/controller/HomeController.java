@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.trading.strategy.analytics.model.Ohlc;
+import com.trading.strategy.analytics.model.Strategy;
 import com.trading.strategy.analytics.repository.OhlcRepository;
+import com.trading.strategy.analytics.repository.StrategyRepository;
 
 @Controller
 public class HomeController {
@@ -25,6 +27,9 @@ public class HomeController {
 
 	@Autowired
 	private OhlcRepository ohlcRepository;
+
+	@Autowired
+	private StrategyRepository strategyRepository;
 
 	@GetMapping("/")
 	public String index() {
@@ -51,32 +56,41 @@ public class HomeController {
 			e.printStackTrace();
 		}
 
-		logger.info(startMs + " ~ " + endMs);
-		// Ohlc ohlc = new Ohlc();
-		//
-		// OhlcId ohlcId = new OhlcId();
-		// ohlcId.setExchange(exchange);
-		// ohlcId.setSymbol(symbol);
-		// ohlcId.setGranularityInMs(Long.parseLong(granularityInMs) * 3600000);
-		// ohlc.setId(ohlcId);
-		//
-		// // Example<Ohlc> example = Example.of(ohlc);
-		//
-		// ExampleMatcher exampleMatcher = ExampleMatcher.matching()
-		// .withMatcher("exchange", match -> match.equals(exchange))
-		// .withMatcher("symbol", match -> match.equals(symbol))
-		// .withMatcher("granularityInMs", match ->
-		// match.equals(Long.parseLong(granularityInMs) * 3600000));
-		// Example<Ohlc> example = Example.of(ohlc, exampleMatcher);
-		//
-		// PageRequest request = PageRequest.of(0, 1000);
-		// Page<Ohlc> result = ohlcRepository.findAll(example, request);
-
 		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
-		logger.info("granularityMs= " + granularityMs);
+
 		List<Ohlc> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
-		logger.info("result=" + result.size());
+
 		return result;
 	}
 
+	@RequestMapping(value = "/strategy_data", produces = "application/json")
+	public @ResponseBody List<Strategy> strategy(@RequestParam Map<String, String> requestParams) {
+
+		String strategy = requestParams.get("strategy");
+		String exchange = requestParams.get("exchange");
+		String symbol = requestParams.get("symbol");
+		String granularityInMs = requestParams.get("granularityInMs");
+		String threshold = requestParams.get("threshold");
+		String startDate = requestParams.get("start_date");
+		String endDate = requestParams.get("end_date");
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
+		try {
+			startMs = dateFormat.parse(startDate).getTime();
+			endMs = dateFormat.parse(endDate).getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
+		Float importance = Float.parseFloat(threshold);
+
+		List<Strategy> result = strategyRepository.findAllForStrategy(strategy, exchange, symbol, granularityMs,
+				importance, startMs, endMs);
+
+		return result;
+	}
 }
