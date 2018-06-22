@@ -16,4 +16,5 @@ public interface OhlcRepository extends JpaRepository<Ohlc, Long> {
 			+ "t.exchange = ?1 and t.symbol = ?2 and granularityInMs = ?3 and startMs> ?4 and startMs < ?5", nativeQuery = true)
 
 	public List<Ohlc> findAllForHistory(String exchange, String symbol, Long granularityInMs, Long startMs, Long endMs);
+
 }

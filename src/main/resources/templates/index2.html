@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+<style>
+.form-group.form-md-line-input {
+    margin: 5px 0 15px;
+}
+table.dataTable td.sorting_1, table.dataTable td.sorting_2, table.dataTable td.sorting_3, table.dataTable th.sorting_1, table.dataTable th.sorting_2, table.dataTable th.sorting_3 {
+    background: inherit!important
+}
+table.dataTable tbody tr.selected {
+    background-color: #36D7B7!important
+}
+</style>
+</head>
+<body>
+    <div class="mt-content-body" layout:fragment="content">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption caption-md">
+                            <i class="icon-bar-chart font-dark hide"></i>
+                            <span class="caption-subject font-green-steel uppercase bold">Historical Trading Data</span>
+                            <span class="caption-helper hide">weekly stats...</span>
+                        </div>
+                        <div class="actions form-inline">
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="history_exchange">
+                                    <option value="gdax" selected>Kraken</option>
+                                    <option value="gdax">Binance</option>
+                                    <option value="gdax">Gemini</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="history_trading_pair">
+                                  <option value="BTC-USD" selected>BTC-USD</option>
+                                  <option value="ETH-BTC">ETH-BTC</option>
+                                  <option value="ETH-USD">ETH-USD</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <div class="input-group input-medium date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                                    <input type="text" class="form-control" id="history_from" name="from" placeholder="From">
+                                    <span class="input-group-addon"> - </span>
+                                    <input type="text" class="form-control" id="history_to" name="to" placeholder="To"> 
+                                </div>
+                            </div>
+                            <div class="form-group form-md-line-input has-info">
+                                <select class="form-control" id="history_granularity">
+                                    <option value="1440">1 Day</option>
+                                    <option value="360" selected>6 hours</option>
+                                    <option value="60">1 hour</option>
+                                    <option value="15">15 min</option>
+                                    <option value="1">1 min</option>
+                                </select>
+                            </div>                            
+                            
+                        </div>
+                    </div>
+                    <div class="portlet-body">    
+                        <div id="history_chart" class="chart " style="height: 400px;"> </div>                    
+                    </div>
+                </div>
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption caption-md">
+                            <i class="icon-bar-chart font-dark hide"></i>
+                            <span class="caption-subject font-green-steel uppercase bold">Strategy Analysis</span>
+                            <span class="caption-helper hide">weekly stats...</span>
+                        </div>
+                        <div class="actions form-inline">
+                            <div class="form-group form-md-line-input has-info margin-right-10">
+                                <select class="form-control" id="analytics_strategy">
+                                    <option value="needle" selected>Strategy1</option>
+                                    <option value="needle">Strategy2</option>
+                                    <option value="needle">Strategy3</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group  has-info margin-right-10">
+                                <label>Threshold %:</label>
+                            </div>
+                            <div class="form-group form-md-line-input has-info margin-right-10">
+                                <input type="text" class="form-control" id="analytics_threshold" value="0.5" style="width:50px">
+                            </div>
+                            <div class="form-group  has-info margin-right-10">
+                                <label>Grouping Size(ms):</label>
+                            </div>                            
+                            <div class="form-group form-md-line-input has-info margin-right-10">
+                                <input type="hidden" class="form-control" id="analytics_group_size22"  style="width:60px" value="10">
+                                <select class="form-control" id="analytics_group_size">
+                                    <option value="1000" selected>1000</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>    
+                            <div class="form-group form-md-line-input has-info ">
+                                <button type="button" id="run_strategy" class="btn yellow-crusta">Run strategy</button>                        
+                            </div>    
+                        </div>
+                    </div>
+                    <div class="portlet-body">  
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="well">
+                                    <ul class="list-unstyled">
+                                        <li > Total points: <span id="result_total">200 </span></li>
+                                        <li> Average %: <span id="result_average_percent">0.65</span>% </li>
+                                        <li> Average Trading Volume: <span id="result_average_volume">15</span> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="md-checkbox">
+                                    
+                                    <label class="mt-checkbox">Display results on chart <input type="checkbox" id="display_on_chart" checked><span></span></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-bordered nowrap table-striped" id="sample_1">
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group form-md-line-input form-inline">
+                            <label>Time range:</label>
+                            <select class="form-control" id="time_range_select">
+                                <option value="6">6 seconds</option>
+                                <option value="60" selected>1 minute</option>
+                                <option value="180">3 minutes</option>
+                                <option value="360">6 minutes</option>
+                            </select>
+                        </div>
+                        <div id="detail_chart" class="chart" style="height: 267px;"> </div>
+                        
+                        <div class="form-group form-md-line-input form-inline">
+                            <label>Compare with:</label>
+                            <select class="form-control" id="compare1_exchange">
+                                <option value="1" selected>Kraken</option>
+                                <option value="2">Binance</option>
+                                <option value="3">Gemini</option>
+                            </select>
+                            <select class="form-control" id="compare1_trading_pair">
+                                <option value="1" selected>BTC/USD</option>
+                                <option value="2">BTC/CHN</option>
+                                <option value="3">BTC/EUR</option>
+                            </select>
+                        </div>
+                        <div id="compare_chart_1" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 300px;"> </div>
+                        
+                        <div class="form-group form-md-line-input form-inline">
+                            <label>Compare with:</label>
+                            <select class="form-control" id="compare2_exchange">
+                                <option value="1" selected>Kraken</option>
+                                <option value="2">Binance</option>
+                                <option value="3">Gemini</option>
+                            </select>
+                            <select class="form-control" id="compare2_trading_pair">
+                                <option value="1" selected>BTC/USD</option>
+                                <option value="2">BTC/CHN</option>
+                                <option value="3">BTC/EUR</option>
+                            </select>
+                        </div>
+                        <div id="compare_chart_2" class="chart bg-green-turquoise bg-font-green-turquoise" style="height: 300px;"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<!-- END BODY -->
+</html>
+<script th:inline="javascript">
+var url = /*[[@{/history_data}]]*/'';
+
+jQuery(document).ready(function() {
+	var today = new Date();
+	$('#history_to').datepicker( "setDate", today);
+	$('#history_from').datepicker("setDate", new Date(today.setMonth(today.getMonth() - 3)));
+	var sample_data = [
+		{
+			time:'03-01-2018 12:33:10.120',
+			percent:0.55,
+			volume: 10,
+			high: 1004.34,
+			low: 987.45
+		},{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        },{
+            time:'03-01-2018 12:33:10.120',
+            percent:0.55,
+            volume: 10,
+            high: 1004.34,
+            low: 987.45
+        }
+	];
+
+    var oTable = $('#sample_1').DataTable({
+        searching: false,
+        pageLength: 5,
+        select: true,
+        lengthChange: false,
+        data: sample_data,
+        columns : [ {
+            data : 'time',
+            title : 'Time',
+            defaultContent : ''
+        }, {
+            data : 'percent',
+            title : '%',
+            defaultContent : ''
+        }, {
+            data : 'volume',
+            title : 'Trading Volume',
+            defaultContent : ''
+        }, {
+            data : 'high',
+            title : 'High Price',
+            defaultContent : ''
+        }, {
+            data : 'low',
+            title : 'Low Price',
+            defaultContent : ''
+        }]
+    }).on('select', function ( e, dt, type, cell, originalEvent ) {
+      refresh_detail_chart();
+    });
+    
+    AmCharts.ready(function () {
+    	createHistoryChart();
+    	createDetailChart();
+    });
+
+
+    var history_chart, history_dataSet, detail_chart, detail_dataSet;
+    function createHistoryChart() {
+    	history_chart = new AmCharts.AmStockChart();
+
+
+        // DATASET //////////////////////////////////////////
+        history_dataSet = new AmCharts.DataSet();
+        history_dataSet.fieldMappings = [{
+            fromField: "open",
+            toField: "open"
+        }, {
+            fromField: "close",
+            toField: "close"
+        }, {
+            fromField: "high",
+            toField: "high"
+        }, {
+            fromField: "low",
+            toField: "low"
+        }, {
+            fromField: "volume",
+            toField: "volume"
+        }, {
+            fromField: "value",
+            toField: "value"
+        }];
+        history_dataSet.color = "#7f8da9";
+        history_dataSet.dataProvider = [];
+        history_dataSet.title = "Stock";
+        history_dataSet.categoryField = "date";
+
+        history_chart.dataSets = [history_dataSet];
+
+        // PANELS ///////////////////////////////////////////
+        var stockPanel = new AmCharts.StockPanel();
+        stockPanel.title = "Value";
+        stockPanel.showCategoryAxis = false;
+        stockPanel.percentHeight = 70;
+
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.dashLength = 5;
+        stockPanel.addValueAxis(valueAxis);
+
+        stockPanel.categoryAxis.dashLength = 5;
+
+        // graph of first stock panel
+        var graph = new AmCharts.StockGraph();
+        graph.type = "candlestick";
+        graph.openField = "open";
+        graph.closeField = "close";
+        graph.highField = "high";
+        graph.lowField = "low";
+        graph.valueField = "close";
+        graph.lineColor = "#7f8da9";
+        graph.fillColors = "#7f8da9";
+        graph.negativeLineColor = "#db4c3c";
+        graph.negativeFillColors = "#db4c3c";
+        graph.proCandlesticks = true;
+        graph.fillAlphas = 1;
+        graph.useDataSetColors = false;
+        graph.comparable = true;
+        graph.compareField = "value";
+        graph.showBalloon = false;
+        stockPanel.addStockGraph(graph);
+
+        var stockLegend = new AmCharts.StockLegend();
+        stockLegend.valueTextRegular = undefined;
+        //stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
+        stockPanel.stockLegend = stockLegend;
+
+        var chartCursor = new AmCharts.ChartCursor();
+        chartCursor.valueLineEnabled = true;
+        chartCursor.valueLineAxis = valueAxis;
+        stockPanel.chartCursor = chartCursor;
+
+        var stockPanel2 = new AmCharts.StockPanel();
+        stockPanel2.title = "Volume";
+        stockPanel2.percentHeight = 30;
+        stockPanel2.marginTop = 1;
+        stockPanel2.showCategoryAxis = true;
+
+        var valueAxis2 = new AmCharts.ValueAxis();
+        valueAxis2.dashLength = 5;
+        stockPanel2.addValueAxis(valueAxis2);
+
+        stockPanel2.categoryAxis.dashLength = 5;
+
+        var graph2 = new AmCharts.StockGraph();
+        graph2.valueField = "volume";
+        graph2.type = "column";
+        graph2.showBalloon = false;
+        graph2.fillAlphas = 1;
+        stockPanel2.addStockGraph(graph2);
+
+        var legend2 = new AmCharts.StockLegend();
+        legend2.markerType = "none";
+        legend2.markerSize = 0;
+        legend2.labelText = "";
+        //legend2.periodValueTextRegular = "[[value.close]]";
+        stockPanel2.stockLegend = legend2;
+
+        var chartCursor2 = new AmCharts.ChartCursor();
+        chartCursor2.valueLineEnabled = true;
+        chartCursor2.valueLineAxis = valueAxis2;
+        stockPanel2.chartCursor = chartCursor2;
+
+        history_chart.panels = [stockPanel, stockPanel2];
+
+
+        // OTHER SETTINGS ////////////////////////////////////
+        var sbsettings = new AmCharts.ChartScrollbarSettings();
+        sbsettings.graph = graph;
+        sbsettings.graphType = "line";
+        sbsettings.usePeriod = "WW";
+        sbsettings.updateOnReleaseOnly = false;
+        history_chart.chartScrollbarSettings = sbsettings;
+
+
+        // PERIOD SELECTOR ///////////////////////////////////
+        var periodSelector = new AmCharts.PeriodSelector();
+        periodSelector.position = "bottom";
+        periodSelector.periods = [{
+            period: "DD",
+            count: 10,
+            label: "10 days"
+        }, {
+            period: "MM",
+            selected: true,
+            count: 1,
+            label: "1 month"
+        }, {
+            period: "YYYY",
+            count: 1,
+            label: "1 year"
+        }, {
+            period: "YTD",
+            label: "YTD"
+        }, {
+            period: "MAX",
+            label: "MAX"
+        }];
+        history_chart.periodSelector = periodSelector;
+
+        history_chart.write('history_chart');
+        
+        refresh_history_chart();
+    }
+    
+    function createDetailChart() {
+        detail_chart = new AmCharts.AmStockChart();
+
+
+        // DATASET //////////////////////////////////////////
+        detail_dataSet = new AmCharts.DataSet();
+        detail_dataSet.fieldMappings = [{
+            fromField: "open",
+            toField: "open"
+        }, {
+            fromField: "close",
+            toField: "close"
+        }, {
+            fromField: "high",
+            toField: "high"
+        }, {
+            fromField: "low",
+            toField: "low"
+        }, {
+            fromField: "volume",
+            toField: "volume"
+        }, {
+            fromField: "value",
+            toField: "value"
+        }];
+        detail_dataSet.color = "#7f8da9";
+        detail_dataSet.dataProvider = [];
+        detail_dataSet.title = "Stock";
+        detail_dataSet.categoryField = "date";
+
+        detail_chart.dataSets = [detail_dataSet];
+
+        // PANELS ///////////////////////////////////////////
+        var stockPanel = new AmCharts.StockPanel();
+        stockPanel.title = "Value";
+        stockPanel.showCategoryAxis = false;
+        stockPanel.percentHeight = 70;
+
+        var valueAxis = new AmCharts.ValueAxis();
+        valueAxis.dashLength = 5;
+        stockPanel.addValueAxis(valueAxis);
+
+        stockPanel.categoryAxis.dashLength = 5;
+
+        // graph of first stock panel
+        var graph = new AmCharts.StockGraph();
+        graph.type = "candlestick";
+        graph.openField = "open";
+        graph.closeField = "close";
+        graph.highField = "high";
+        graph.lowField = "low";
+        graph.valueField = "close";
+        graph.lineColor = "#7f8da9";
+        graph.fillColors = "#7f8da9";
+        graph.negativeLineColor = "#db4c3c";
+        graph.negativeFillColors = "#db4c3c";
+        graph.proCandlesticks = true;
+        graph.fillAlphas = 1;
+        graph.useDataSetColors = false;
+        graph.comparable = true;
+        graph.compareField = "value";
+        graph.showBalloon = false;
+        stockPanel.addStockGraph(graph);
+
+        var stockLegend = new AmCharts.StockLegend();
+        stockLegend.valueTextRegular = undefined;
+        //stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
+        stockPanel.stockLegend = stockLegend;
+
+        var chartCursor = new AmCharts.ChartCursor();
+        chartCursor.valueLineEnabled = true;
+        chartCursor.valueLineAxis = valueAxis;
+        stockPanel.chartCursor = chartCursor;
+
+        var stockPanel2 = new AmCharts.StockPanel();
+        stockPanel2.title = "Volume";
+        stockPanel2.percentHeight = 30;
+        stockPanel2.marginTop = 1;
+        stockPanel2.showCategoryAxis = true;
+
+        var valueAxis2 = new AmCharts.ValueAxis();
+        valueAxis2.dashLength = 5;
+        stockPanel2.addValueAxis(valueAxis2);
+
+        stockPanel2.categoryAxis.dashLength = 5;
+
+        var graph2 = new AmCharts.StockGraph();
+        graph2.valueField = "volume";
+        graph2.type = "column";
+        graph2.showBalloon = false;
+        graph2.fillAlphas = 1;
+        stockPanel2.addStockGraph(graph2);
+
+        var legend2 = new AmCharts.StockLegend();
+        legend2.markerType = "none";
+        legend2.markerSize = 0;
+        legend2.labelText = "";
+        //legend2.periodValueTextRegular = "[[value.close]]";
+        stockPanel2.stockLegend = legend2;
+
+        var chartCursor2 = new AmCharts.ChartCursor();
+        chartCursor2.valueLineEnabled = true;
+        chartCursor2.valueLineAxis = valueAxis2;
+        stockPanel2.chartCursor = chartCursor2;
+
+        detail_chart.panels = [stockPanel, stockPanel2];
+
+
+        // OTHER SETTINGS ////////////////////////////////////
+        var sbsettings = new AmCharts.ChartScrollbarSettings();
+        sbsettings.graph = graph;
+        sbsettings.graphType = "line";
+        sbsettings.usePeriod = "WW";
+        sbsettings.updateOnReleaseOnly = false;
+        detail_chart.chartScrollbarSettings = sbsettings;
+
+
+        // PERIOD SELECTOR ///////////////////////////////////
+        var periodSelector = new AmCharts.PeriodSelector();
+        periodSelector.position = "bottom";
+        periodSelector.periods = [{
+            period: "DD",
+            count: 10,
+            label: "10 days"
+        }, {
+            period: "MM",
+            selected: true,
+            count: 1,
+            label: "1 month"
+        }, {
+            period: "YYYY",
+            count: 1,
+            label: "1 year"
+        }, {
+            period: "YTD",
+            label: "YTD"
+        }, {
+            period: "MAX",
+            label: "MAX"
+        }];
+        detail_chart.periodSelector = periodSelector;
+
+        detail_chart.write('detail_chart');
+
+    }
+
+    $('#history_chart').closest('.portlet').find('.fullscreen').click(function() {
+        chart.invalidateSize();
+    });
+    
+    function refresh_history_chart() {
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          data:  {
+    		  exchange: $('#history_exchange').val(),
+    		  symbol: $('#history_trading_pair').val(),
+    		  granularityInMs: $('#history_granularity').val(),
+    		  start_date: $('#history_from').val(),
+    		  end_date: $('#history_to').val()
+          },
+          success: function(data, res){
+        	  $.each(data, function(key, item){
+        		  var date = new Date(item.id.date);
+        		  delete item.id;
+        		  item.date = date;
+        	  })
+        	  
+        	  history_dataSet.dataProvider = data;
+              history_chart.validateData();
+    
+
+          },
+        });
+
+    }
+    
+    function refresh_detail_chart() {
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          data:  {
+              exchange: $('#history_exchange').val(),
+              symbol: $('#history_trading_pair').val(),
+              granularityInMs: $('#history_granularity').val(),
+              start_date: $('#history_from').val(),
+              end_date: $('#history_to').val()
+          },
+          success: function(data, res){
+              $.each(data, function(key, item){
+                  var date = new Date(item.id.date);
+                  delete item.id;
+                  item.date = date;
+              })
+              
+              detail_dataSet.dataProvider = data;
+              detail_chart.validateData();
+    
+
+          },
+        });
+
+    }
+    
+    $('#run_strategy').click(function() {
+    	alert("run_strategy");
+    	
+    })
+    
+    $('#history_exchange, #history_trading_pair, #history_granularity').change(function() {
+        
+        refresh_history_chart();
+    })
+    
+    $('#compare1_exchange, #compare1_trading_pair').change(function() {
+        alert("compare1");
+    })
+    
+    $('#compare2_exchange, #compare2_trading_pair').change(function() {
+        alert("compare2");
+    })
+    
+    $('#display_on_chart').change(function(){
+    	alert("display result on chart");
+    })
+    
+    $('#time_range_select').change(function() {
+    	alert("time range");
+    })
+    
+
+    
+});
+
+</script>
+
