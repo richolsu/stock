@@ -14,11 +14,11 @@ import com.trading.strategy.analytics.model.StrategySearchItem;
 // CRUD refers Create, Read, Update, Delete
 
 public interface StrategyRepository extends JpaRepository<Strategy, Long> {
-	@Query(value = "SELECT a.high, a.low, round(a.volume, 4) volume, a.startMs, round((high-low)/high,4) percent FROM ohlc a left join strategy b on a.exchange=b.exchange and a.symbol=b.symbol and a.granularityInMs=b.granularityInMs and a.startMs=b.startMs "
+	@Query(value = "SELECT a.high, a.low, round(a.volume, 4) volume, a.startMs, round((high-low)/high,4) percent FROM ohlc a left join strategy b on a.exchange=b.exchange and a.symbol=b.symbol and a.granularityInMs=b.granularityInMs and a.startMs=b.startMs and b.strategyName= :strategy "
 			+ "where a.exchange = :exchange and a.symbol = :symbol and a.granularityInMs = :granularityInMs and (a.high-a.low)/a.high> :importance and "
-			+ "a.startMs> :startMs and a.startMs < :endMs and b.strategyName= :strategy", countQuery = "SELECT count(*) FROM ohlc a left join strategy b on a.exchange=b.exchange and a.symbol=b.symbol and a.granularityInMs=b.granularityInMs and a.startMs=b.startMs "
+			+ "a.startMs> :startMs and a.startMs < :endMs", countQuery = "SELECT count(*) FROM ohlc a left join strategy b on a.exchange=b.exchange and a.symbol=b.symbol and a.granularityInMs=b.granularityInMs and a.startMs=b.startMs  and b.strategyName= :strategy "
 					+ "where a.exchange = :exchange and a.symbol = :symbol and a.granularityInMs = :granularityInMs and (a.high-a.low)/a.high> :importance and"
-					+ " a.startMs> :startMs and a.startMs < :endMs and b.strategyName= :strategy", nativeQuery = true)
+					+ " a.startMs> :startMs and a.startMs < :endMs", nativeQuery = true)
 
 	public Page<StrategySearchItem> findAllForStrategy(@Param("strategy") String strategy,
 			@Param("exchange") String exchange, @Param("symbol") String symbol,

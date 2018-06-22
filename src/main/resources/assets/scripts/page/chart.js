@@ -42,151 +42,171 @@ function createStockChart(tragetDivId) {
 	// DATASET //////////////////////////////////////////
 	var dataSet = new AmCharts.DataSet();
 	dataSet.fieldMappings = [{
-		fromField: "open",
-		toField: "open"
-	}, {
-		fromField: "close",
-		toField: "close"
-	}, {
-		fromField: "high",
-		toField: "high"
-	}, {
-		fromField: "low",
-		toField: "low"
-	}, {
-		fromField: "volume",
-		toField: "volume"
-	}, {
-		fromField: "value",
-		toField: "value"
-	}];
-	dataSet.color = "#7f8da9";
-	dataSet.dataProvider = [];
-	dataSet.title = "West Stock";
-	dataSet.categoryField = "date";
-
-	var dataSet2 = new AmCharts.DataSet();
-	dataSet2.fieldMappings = [{
-		fromField: "value",
-		toField: "value"
-	}];
-	dataSet2.color = "#fac314";
-	dataSet2.dataProvider = [];
-	dataSet2.compared = true;
-	dataSet2.title = "East Stock";
-	dataSet2.categoryField = "date";
+        fromField: "open",
+        toField: "open"
+    }, {
+        fromField: "close",
+        toField: "close"
+    }, {
+        fromField: "high",
+        toField: "high"
+    }, {
+        fromField: "low",
+        toField: "low"
+    }, {
+        fromField: "volume",
+        toField: "volume"
+    }, {
+        fromField: "value",
+        toField: "value"
+    }, {
+        fromField: "color",
+        toField: "color"
+    }, {
+        fromField: "count",
+        toField: "count"
+    }];
+    dataSet.color = "#fff";
+    dataSet.dataProvider = [];
+    dataSet.title = "Stock";
+    dataSet.categoryField = "date";
+    dataSet.compared = false;
 
 	chart.dataSets = [dataSet];
+	
+	var plSettings = new AmCharts.PanelsSettings();
+	plSettings.color = "#0";
+	plSettings.plotAreaFillColors = "#fff";
+	plSettings.plotAreaFillAlphas = 1;
 
-	// PANELS ///////////////////////////////////////////
-	var stockPanel = new AmCharts.StockPanel();
-	stockPanel.title = "Value";
-	stockPanel.showCategoryAxis = false;
-	stockPanel.percentHeight = 70;
+	chart.panelsSettings = plSettings;
+	
+    var cateAxes = new AmCharts.CategoryAxesSettings();
+    cateAxes.equalSpacing = true;
+    cateAxes.gridColor = "#acacac";
+    cateAxes.gridAlpha = 1;
 
-	var valueAxis = new AmCharts.ValueAxis();
-	valueAxis.dashLength = 5;
-	stockPanel.addValueAxis(valueAxis);
+    chart.categoryAxesSettings = cateAxes;
+    
+    var valAxes = new AmCharts.ValueAxesSettings();
+    valAxes.gridColor = "#acacac";
+    valAxes.gridAlpha = 1;
+    //valAxes.inside = false;
+    valAxes.showLastLabel = true;
 
-	stockPanel.categoryAxis.dashLength = 5;
+    chart.valueAxesSettings = valAxes;    
+    
+    // PANELS ///////////////////////////////////////////
+    var stockPanel = new AmCharts.StockPanel();
+    stockPanel.title = "Value";
+    stockPanel.showCategoryAxis = false;
+    stockPanel.percentHeight = 70;
 
-	// graph of first stock panel
-	var graph = new AmCharts.StockGraph();
-	graph.type = "candlestick";
-	graph.openField = "open";
-	graph.closeField = "close";
-	graph.highField = "high";
-	graph.lowField = "low";
-	graph.valueField = "close";
-	graph.lineColor = "#7f8da9";
-	graph.fillColors = "#7f8da9";
-	graph.negativeLineColor = "#db4c3c";
-	graph.negativeFillColors = "#db4c3c";
-	graph.proCandlesticks = true;
-	graph.fillAlphas = 1;
-	graph.useDataSetColors = false;
-	graph.comparable = true;
-	graph.compareField = "value";
-	graph.showBalloon = false;
-	stockPanel.addStockGraph(graph);
+    var valueAxis = new AmCharts.ValueAxis();
+    valueAxis.dashLength = 5;
+    stockPanel.addValueAxis(valueAxis);
 
-	var stockLegend = new AmCharts.StockLegend();
-	stockLegend.valueTextRegular = undefined;
-	stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
-	stockPanel.stockLegend = stockLegend;
+    stockPanel.categoryAxis.dashLength = 5;
 
-	var chartCursor = new AmCharts.ChartCursor();
-	chartCursor.valueLineEnabled = true;
-	chartCursor.valueLineAxis = valueAxis;
-	stockPanel.chartCursor = chartCursor;
+    // graph of first stock panel
+    var graph = new AmCharts.StockGraph();
+    graph.type = "candlestick";
+    graph.openField = "open";
+    graph.closeField = "close";
+    graph.highField = "high";
+    graph.lowField = "low";
+    graph.valueField = "close";
+    graph.lineColor = "#11edf1";
+    graph.fillColors = "#11edf1";
+    graph.negativeLineColor = "#db4c3c";
+    graph.negativeFillColors = "#db4c3c";
+    graph.proCandlesticks = true;
+    graph.fillAlphas = 1;
+    graph.useDataSetColors = false;
+    graph.showBalloon = false;
+    stockPanel.addStockGraph(graph);
 
-	var stockPanel2 = new AmCharts.StockPanel();
-	stockPanel2.title = "Volume";
-	stockPanel2.percentHeight = 30;
-	stockPanel2.marginTop = 1;
-	stockPanel2.showCategoryAxis = true;
+    var stockLegend = new AmCharts.StockLegend();
+    stockLegend.valueTextRegular = "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]]";
+    //stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
+    stockPanel.stockLegend = stockLegend;
 
-	var valueAxis2 = new AmCharts.ValueAxis();
-	valueAxis2.dashLength = 5;
-	stockPanel2.addValueAxis(valueAxis2);
+    var chartCursor = new AmCharts.ChartCursor();
+    chartCursor.valueLineEnabled = true;
+    chartCursor.valueLineAxis = valueAxis;
+    stockPanel.chartCursor = chartCursor;
 
-	stockPanel2.categoryAxis.dashLength = 5;
+    var stockPanel2 = new AmCharts.StockPanel();
+    stockPanel2.title = "Volume";
+    stockPanel2.percentHeight = 30;
+    stockPanel2.marginTop = 1;
+    stockPanel2.showCategoryAxis = true;
 
-	var graph2 = new AmCharts.StockGraph();
-	graph2.valueField = "volume";
-	graph2.type = "column";
-	graph2.showBalloon = false;
-	graph2.fillAlphas = 1;
-	stockPanel2.addStockGraph(graph2);
+    var valueAxis2 = new AmCharts.ValueAxis();
+    valueAxis2.dashLength = 5;
+    stockPanel2.addValueAxis(valueAxis2);
 
-	var legend2 = new AmCharts.StockLegend();
-	legend2.markerType = "none";
-	legend2.markerSize = 0;
-	legend2.labelText = "";
-	legend2.periodValueTextRegular = "[[value.close]]";
-	stockPanel2.stockLegend = legend2;
+    stockPanel2.categoryAxis.dashLength = 5;
 
-	var chartCursor2 = new AmCharts.ChartCursor();
-	chartCursor2.valueLineEnabled = true;
-	chartCursor2.valueLineAxis = valueAxis2;
-	stockPanel2.chartCursor = chartCursor2;
+    var graph2 = new AmCharts.StockGraph();
+    graph2.valueField = "volume";
+    graph2.countField = "count";
+    graph2.type = "column";
+    graph2.showBalloon = true;
+    graph2.balloonText = "Count: <b>[[count]]</b>";
+    graph2.fillColorsField = "color";
+    graph2.fillAlphas = 1;
+    stockPanel2.addStockGraph(graph2);
 
-	chart.panels = [stockPanel, stockPanel2];
+    var legend2 = new AmCharts.StockLegend();
+    legend2.markerType = "none";
+    legend2.markerSize = 0;
+    legend2.labelText = "";
+    //legend2.periodValueTextRegular = "[[value.close]]";*/
+    legend2.valueTextRegular = "Volume: [[volume]]";
+    stockPanel2.stockLegend = legend2;
+
+    var chartCursor2 = new AmCharts.ChartCursor();
+    chartCursor2.valueLineEnabled = true;
+    chartCursor2.valueLineAxis = valueAxis2;
+    stockPanel2.chartCursor = chartCursor2;
+
+    chart.panels = [stockPanel, stockPanel2];
 
 
-	// OTHER SETTINGS ////////////////////////////////////
-	var sbsettings = new AmCharts.ChartScrollbarSettings();
-	sbsettings.graph = graph;
-	sbsettings.graphType = "line";
-	sbsettings.usePeriod = "WW";
-	sbsettings.updateOnReleaseOnly = false;
-	chart.chartScrollbarSettings = sbsettings;
+    // OTHER SETTINGS ////////////////////////////////////
+    var sbsettings = new AmCharts.ChartScrollbarSettings();
+    sbsettings.graph = graph;
+    sbsettings.graphType = "line";
+    sbsettings.usePeriod = "WW";
+    sbsettings.updateOnReleaseOnly = false;
+    chart.chartScrollbarSettings = sbsettings;
 
 
-	// PERIOD SELECTOR ///////////////////////////////////
-	var periodSelector = new AmCharts.PeriodSelector();
-	periodSelector.position = "bottom";
-	periodSelector.periods = [{
-		period: "DD",
-		count: 10,
-		label: "10 days"
-	}, {
-		period: "MM",
-		selected: true,
-		count: 1,
-		label: "1 month"
-	}, {
-		period: "YYYY",
-		count: 1,
-		label: "1 year"
-	}, {
-		period: "YTD",
-		label: "YTD"
-	}, {
-		period: "MAX",
-		label: "MAX"
-	}];
-	chart.periodSelector = periodSelector;
+    // PERIOD SELECTOR ///////////////////////////////////
+    var periodSelector = new AmCharts.PeriodSelector();
+    periodSelector.position = "bottom";
+    periodSelector.periods = [{
+        period: "DD",
+        count: 10,
+        label: "10 days"
+    }, {
+        period: "MM",
+        selected: true,
+        count: 1,
+        label: "1 month"
+    }, {
+        period: "YYYY",
+        count: 1,
+        label: "1 year"
+    }, {
+        period: "YTD",
+        label: "YTD"
+    }, {
+        period: "MAX",
+        label: "MAX"
+    }];
+    chart.periodSelector = periodSelector;
 
 	chart.write(tragetDivId);
 	
@@ -235,6 +255,7 @@ jQuery(document).ready(function() {
 	        },
 		},
         pageLength: 5,
+        deferLoading: 2,
         select: true,
         columns : [ {
             data : 'startMs',
@@ -259,10 +280,14 @@ jQuery(document).ready(function() {
             data : 'low',
             title : 'Low Price',
             defaultContent : ''
-        }]
-    }).on('select', function ( e, dt, type, cell, originalEvent ) {
-      refresh_detail_chart();
+        }],
+        fnDrawCallback: function (oSettings, b, c) {
+        	$('#strategy_result').DataTable().row(':eq(0)', { page: 'current' }).select();
+        }
+    }).on('select', function (e, dt, type, indexes) {
+        refresh_detail_chart();
     });
+	
 	
 	AmCharts.ready(function () {
 		histo = createStockChart('history_chart');
@@ -277,19 +302,25 @@ jQuery(document).ready(function() {
 
         $.ajax({
           type: "POST",
-          url: url,
+          url: history_url,
           data:  {
+        	  strategy: $('#analytics_strategy').val(),
     		  exchange: $('#history_exchange').val(),
     		  symbol: $('#history_trading_pair').val(),
     		  granularityInMs: $('#history_granularity').val(),
+    		  threshold: $('#analytics_threshold').val(),
     		  start_date: $('#history_from').val(),
     		  end_date: $('#history_to').val()
           },
           success: function(data, res){
         	  $.each(data, function(key, item){
-        		  var date = new Date(item.id.date);
-        		  delete item.id;
-        		  item.date = date;
+            	  if (item.importance > $('#analytics_threshold').val()){
+            		  console.log(item);
+            		  item.color = '#ff0000';
+            	  }else{
+            		  item.count = 0;
+            		  item.color = '#00ff00';
+            	  }        		  
         	  })
         	  
         	  histo.dataSet.dataProvider = data;
@@ -303,27 +334,43 @@ jQuery(document).ready(function() {
     
     function refresh_detail_chart() {
 
+    	var selectedRowData = oTable.row({selected: true}).data();
+    	startMs = selectedRowData.startMs;
+    	granularityInMs = $('#time_range_select').val();
+    	startMs = startMs - granularityInMs * 30;
+    	endMs = startMs + granularityInMs * 60;
+    	
         $.ajax({
           type: "POST",
-          url: url,
+          url: detail_url,
           data:  {
+        	  strategy: $('#analytics_strategy').val(),
               exchange: $('#history_exchange').val(),
               symbol: $('#history_trading_pair').val(),
-              granularityInMs: $('#history_granularity').val(),
-              start_date: $('#history_from').val(),
-              end_date: $('#history_to').val()
+              threshold: $('#analytics_threshold').val(),
+              granularityInMs: $('#time_range_select').val(),
+              start_date: startMs,
+              end_date: endMs
           },
           success: function(data, res){
+        	  
+        	  if (data.length == 0) {
+        		  toastr.info("Info Message", "Title");
+        	  }
+        	  
               $.each(data, function(key, item){
-                  var date = new Date(item.id.date);
-                  delete item.id;
-                  item.date = date;
+            	  if (item.importance > $('#analytics_threshold').val()){
+            		  console.log(item);
+            		  item.color = '#ff0000';
+            	  }else{
+            		  item.count = 0;
+            		  item.color = '#00ff00';
+            	  }  
               })
               
               detail.dataSet.dataProvider = data;
               detail.chart.validateData();
     
-
           },
         });
 
@@ -354,21 +401,31 @@ jQuery(document).ready(function() {
     
     function refresh_compare1_chart() {
 
+    	var selectedRowData = oTable.row({selected: true}).data();
+    	startMs = selectedRowData.startMs;
+    	granularityInMs = $('#time_range_select').val();
+    	startMs = startMs - granularityInMs * 30;
+    	endMs = startMs + granularityInMs * 60;
+    	
         $.ajax({
           type: "POST",
-          url: url,
+          url: detail_url,
           data:  {
-              exchange: $('#history_exchange').val(),
-              symbol: $('#history_trading_pair').val(),
-              granularityInMs: $('#history_granularity').val(),
-              start_date: $('#history_from').val(),
-              end_date: $('#history_to').val()
+        	  strategy: $('#analytics_strategy').val(),
+        	  threshold: $('#analytics_threshold').val(),
+              exchange: $('#compare1_exchange').val(),
+              symbol: $('#compare1_trading_pair').val(),
+              granularityInMs: granularityInMs,
+              start_date: startMs,
+              end_date: endMs
           },
           success: function(data, res){
               $.each(data, function(key, item){
-                  var date = new Date(item.id.date);
-                  delete item.id;
-                  item.date = date;
+            	  if (item.importance > $('#analytics_threshold').val()){
+            		  console.log(item);
+            	  }else{
+            		  item.count = 0;
+            	  }            	  
               })
               
               compare1.dataSet.dataProvider = data;
@@ -382,21 +439,31 @@ jQuery(document).ready(function() {
     
     function refresh_compare2_chart() {
 
+    	var selectedRowData = oTable.row({selected: true}).data();
+    	startMs = selectedRowData.startMs;
+    	granularityInMs = $('#time_range_select').val();
+    	startMs = startMs - granularityInMs * 30;
+    	endMs = startMs + granularityInMs * 60;
+    	
         $.ajax({
           type: "POST",
-          url: url,
+          url: detail_url,
           data:  {
-              exchange: $('#history_exchange').val(),
-              symbol: $('#history_trading_pair').val(),
-              granularityInMs: $('#history_granularity').val(),
-              start_date: $('#history_from').val(),
-              end_date: $('#history_to').val()
+        	  strategy: $('#analytics_strategy').val(),
+        	  threshold: $('#analytics_threshold').val(),
+              exchange: $('#compare2_exchange').val(),
+              symbol: $('#compare2_trading_pair').val(),
+              granularityInMs: granularityInMs,
+              start_date: startMs,
+              end_date: endMs
           },
           success: function(data, res){
               $.each(data, function(key, item){
-                  var date = new Date(item.id.date);
-                  delete item.id;
-                  item.date = date;
+            	  if (item.importance > $('#analytics_threshold').val()){
+            		  console.log(item);
+            	  }else{
+            		  item.count = 0;
+            	  }            	  
               })
               
               compare2.dataSet.dataProvider = data;
@@ -423,6 +490,8 @@ jQuery(document).ready(function() {
     	if ($('#compare1_exchange').val() !=0 && $('#compare1_trading_pair').val() !=0) {
         	$('#compare_chart_1').removeClass('hidden');
         	refresh_compare1_chart();
+    	}else{
+    		$('#compare_chart_1').addClass('hidden');
     	}
     })
     
@@ -430,6 +499,8 @@ jQuery(document).ready(function() {
     	if ($('#compare2_exchange').val() !=0 && $('#compare2_trading_pair').val() !=0) {
 	    	$('#compare_chart_2').removeClass('hidden');
 	    	refresh_compare2_chart();
+    	}else{
+    		$('#compare_chart_2').addClass('hidden');
     	}
     })
     

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.trading.strategy.analytics.model.Ohlc;
+import com.trading.strategy.analytics.model.HistoryResult;
 import com.trading.strategy.analytics.model.StrategyResult;
 import com.trading.strategy.analytics.model.StrategySearchItem;
 import com.trading.strategy.analytics.repository.OhlcRepository;
@@ -41,11 +41,13 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/history_data", produces = "application/json")
-	public @ResponseBody List<Ohlc> vendor(@RequestParam Map<String, String> requestParams) {
+	public @ResponseBody List<HistoryResult> historyData(@RequestParam Map<String, String> requestParams) {
 
+		String strategy = requestParams.get("strategy");
 		String exchange = requestParams.get("exchange");
 		String symbol = requestParams.get("symbol");
 		String granularityInMs = requestParams.get("granularityInMs");
+		String threshold = requestParams.get("threshold");
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
@@ -61,8 +63,32 @@ public class HomeController {
 		}
 
 		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
+		Double importance = Double.parseDouble(threshold);
 
-		List<Ohlc> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
+		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, exchange, symbol, granularityMs,
+				importance, startMs, endMs);
+
+		return result;
+	}
+
+	@RequestMapping(value = "/detail_data", produces = "application/json")
+	public @ResponseBody List<HistoryResult> detailData(@RequestParam Map<String, String> requestParams) {
+
+		String strategy = requestParams.get("strategy");
+		String exchange = requestParams.get("exchange");
+		String symbol = requestParams.get("symbol");
+		String granularityInMs = requestParams.get("granularityInMs");
+		String threshold = requestParams.get("threshold");
+		String startDate = requestParams.get("start_date");
+		String endDate = requestParams.get("end_date");
+
+		Long startMs = Long.parseLong(startDate);
+		Long endMs = Long.parseLong(endDate);
+		Long granularityMs = Long.parseLong(granularityInMs);
+		Double importance = Double.parseDouble(threshold);
+
+		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, exchange, symbol, granularityMs,
+				importance, startMs, endMs);
 
 		return result;
 	}

@@ -104,9 +104,9 @@ table.dataTable tbody tr.selected {
                             <div class="col-md-4">
                                 <div class="well">
                                     <ul class="list-unstyled">
-                                        <li > Total points: <span id="result_total">200 </span></li>
-                                        <li> Average %: <span id="result_average_percent">0.65</span></li>
-                                        <li> Average Trading Volume: <span id="result_average_volume">15</span> </li>
+                                        <li > Total points: <span id="result_total"></span></li>
+                                        <li> Average %: <span id="result_average_percent"></span></li>
+                                        <li> Average Trading Volume: <span id="result_average_volume"></span> </li>
                                     </ul>
                                 </div>
                             </div>
@@ -126,10 +126,10 @@ table.dataTable tbody tr.selected {
                         <div class="form-group form-md-line-input form-inline">
                             <label>Time range:</label>
                             <select class="form-control" id="time_range_select">
-                                <option value="6">6 seconds</option>
-                                <option value="60" selected>1 minute</option>
-                                <option value="180">3 minutes</option>
-                                <option value="360">6 minutes</option>
+                                <option value="100">6 seconds</option>
+                                <option value="1000" selected>1 minute</option>
+                                <option value="3000">3 minutes</option>
+                                <option value="6000">6 minutes</option>
                             </select>
                         </div>
                         <div id="detail_chart" class="chart" style="height: 267px;"> </div>
@@ -176,8 +176,9 @@ table.dataTable tbody tr.selected {
 <!-- END BODY -->
 </html>
 <script th:inline="javascript">
-var url = /*[[@{/history_data}]]*/'';
+var history_url = /*[[@{/history_data}]]*/'';
 var strategy_run_url = /*[[@{/strategy/run}]]*/'';
+var detail_url = /*[[@{/detail_data}]]*/'';
 var strategy_list_url = /*[[@{/strategy/list}]]*/'';
 </script>
 <script th:src="@{/assets/scripts/page/chart.js}" type="text/javascript"></script>

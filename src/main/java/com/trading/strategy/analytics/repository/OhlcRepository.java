@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.trading.strategy.analytics.model.HistoryResult;
 import com.trading.strategy.analytics.model.Ohlc;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
@@ -12,9 +14,12 @@ import com.trading.strategy.analytics.model.Ohlc;
 
 public interface OhlcRepository extends JpaRepository<Ohlc, Long> {
 
-	@Query(value = "SELECT * FROM ohlc t WHERE "
-			+ "t.exchange = ?1 and t.symbol = ?2 and granularityInMs = ?3 and startMs> ?4 and startMs < ?5", nativeQuery = true)
+	@Query(value = "SELECT a.startMs, a.open, a.low, a.high, a.close, a.volume, b.importance, b.count FROM ohlc a "
+			+ "left join strategy b on a.exchange=b.exchange and a.symbol=b.symbol and a.granularityInMs=b.granularityInMs and a.startMs=b.startMs and b.strategyName= :strategy and b.importance> :importance "
+			+ "where a.exchange = :exchange and a.symbol = :symbol and a.granularityInMs = :granularityInMs and a.startMs> :startMs and a.startMs < :endMs order by startMs", nativeQuery = true)
 
-	public List<Ohlc> findAllForHistory(String exchange, String symbol, Long granularityInMs, Long startMs, Long endMs);
+	public List<HistoryResult> findAllForHistory(@Param("strategy") String strategy, @Param("exchange") String exchange,
+			@Param("symbol") String symbol, @Param("granularityInMs") Long granularityInMs,
+			@Param("importance") Double importance, @Param("startMs") Long startMs, @Param("endMs") Long endMs);
 
 }
