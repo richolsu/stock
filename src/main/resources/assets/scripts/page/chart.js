@@ -82,7 +82,7 @@ function createStockChart(tragetDivId) {
 	chart.panelsSettings = plSettings;
 	
     var cateAxes = new AmCharts.CategoryAxesSettings();
-    cateAxes.equalSpacing = true;
+    //cateAxes.equalSpacing = true;
     cateAxes.gridColor = "#acacac";
     cateAxes.gridAlpha = 1;
 
@@ -352,7 +352,7 @@ jQuery(document).ready(function() {
           success: function(data, res){
         	  
         	  if (data.length == 0) {
-        		  toastr.info("Info Message", "Title");
+        		  toastr.warning("There are no data to draw chart", "Sorry!");
         	  }
         	  
               $.each(data, function(key, item){
@@ -417,6 +417,11 @@ jQuery(document).ready(function() {
               end_date: endMs
           },
           success: function(data, res){
+        	  
+        	  if (data.length == 0) {
+        		  toastr.warning("There are no data to draw chart", "Sorry!");
+        	  }
+        	  
               $.each(data, function(key, item){
             	  if (item.importance > $('#analytics_threshold').val()){
             		  console.log(item);
@@ -455,6 +460,11 @@ jQuery(document).ready(function() {
               end_date: endMs
           },
           success: function(data, res){
+        	  
+        	  if (data.length == 0) {
+        		  toastr.warning("There are no data to draw chart", "Sorry!");
+        	  }
+        	  
               $.each(data, function(key, item){
             	  if (item.importance > $('#analytics_threshold').val()){
             		  console.log(item);
@@ -514,6 +524,6 @@ jQuery(document).ready(function() {
     })
     
     $('#time_range_select').change(function() {
-    	alert("time range");
+    	refresh_detail_chart();
     })
 })
