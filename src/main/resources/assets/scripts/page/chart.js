@@ -291,9 +291,6 @@ jQuery(document).ready(function() {
 	
 	AmCharts.ready(function () {
 		histo = createStockChart('history_chart');
-		detail = createStockChart('detail_chart');
-		compare1 = createStockChart('compare_chart_1');
-		compare2 = createStockChart('compare_chart_2');
 		
 		refresh_history_chart();
 	});
@@ -477,6 +474,9 @@ jQuery(document).ready(function() {
     
     $('#run_strategy').click(function() {
     	$('#strategy_body').removeClass('hidden');
+    	if (detail == undefined)
+    		detail = createStockChart('detail_chart');
+    	
     	get_strategy_result();
     	oTable.draw();
     })
@@ -487,8 +487,11 @@ jQuery(document).ready(function() {
     })
     
     $('#compare1_exchange, #compare1_trading_pair').change(function() {
-    	if ($('#compare1_exchange').val() !=0 && $('#compare1_trading_pair').val() !=0) {
+
+		if ($('#compare1_exchange').val() !=0 && $('#compare1_trading_pair').val() !=0) {
         	$('#compare_chart_1').removeClass('hidden');
+        	if (compare1 == undefined)
+        		compare1 = createStockChart('compare_chart_1');
         	refresh_compare1_chart();
     	}else{
     		$('#compare_chart_1').addClass('hidden');
@@ -498,6 +501,8 @@ jQuery(document).ready(function() {
     $('#compare2_exchange, #compare2_trading_pair').change(function() {
     	if ($('#compare2_exchange').val() !=0 && $('#compare2_trading_pair').val() !=0) {
 	    	$('#compare_chart_2').removeClass('hidden');
+	    	if (compare2 == undefined)
+	    		compare2 = createStockChart('compare_chart_2');
 	    	refresh_compare2_chart();
     	}else{
     		$('#compare_chart_2').addClass('hidden');
