@@ -7,9 +7,17 @@ var formatTime = function(unixTimestamp) {
     var hours = dt.getHours();
     var minutes = dt.getMinutes();
     var seconds = dt.getSeconds();
+    var millisecs = dt.getMilliseconds()
 
     // the above dt.get...() functions return a single digit
     // so I prepend the zero here when needed
+    
+    if (month < 10) 
+    	month = '0' + month;
+    
+    if (day < 10) 
+    	day = '0' + day;
+    
     if (hours < 10) 
      hours = '0' + hours;
 
@@ -18,8 +26,13 @@ var formatTime = function(unixTimestamp) {
 
     if (seconds < 10) 
      seconds = '0' + seconds;
+    
+    if (millisecs < 10) 
+    	millisecs = '00' + millisecs;
+    else if (millisecs < 100)
+    	millisecs = '0' + millisecs;
 
-    return month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds;
+    return month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":" + seconds + "." + millisecs;
 }     
 
 function createStockChart(tragetDivId) {
@@ -198,6 +211,7 @@ jQuery(document).ready(function() {
 		ordering: true,
 		ajax : {
 			url : strategy_list_url,
+			type: "POST",
 			data : function(data) {
 				var filter = {
 					rows_per_page : data.length,
@@ -208,7 +222,7 @@ jQuery(document).ready(function() {
 		            exchange: $('#history_exchange').val(),
 					symbol: $('#history_trading_pair').val(),
 					threshold: $('#analytics_threshold').val(),
-					granularityInMs: $('#history_granularity').val(),
+					granularityInMs: $('#analytics_group_size').val(),
 					start_date: $('#history_from').val(),
 					end_date: $('#history_to').val()
 				}
@@ -315,6 +329,29 @@ jQuery(document).ready(function() {
 
     }
     
+    function get_strategy_result() {
+
+        $.ajax({
+          type: "POST",
+          url: strategy_run_url,
+          data:  {
+				strategy: $('#analytics_strategy').val(),
+				exchange: $('#history_exchange').val(),
+				symbol: $('#history_trading_pair').val(),
+				threshold: $('#analytics_threshold').val(),
+				granularityInMs: $('#analytics_group_size').val(),
+				start_date: $('#history_from').val(),
+				end_date: $('#history_to').val()
+          },
+          success: function(data, res){
+        	  $('#result_total').html(data.total);
+        	  $('#result_average_percent').html(data.percent);
+        	  $('#result_average_volume').html(data.volume);
+          },
+        });
+
+    }
+    
     function refresh_compare1_chart() {
 
         $.ajax({
@@ -371,34 +408,10 @@ jQuery(document).ready(function() {
 
     }
     
-    function run_strategy() {
-        $.ajax({
-          type: "POST",
-          url: url,
-          data:  {
-              exchange: $('#history_exchange').val(),
-              symbol: $('#history_trading_pair').val(),
-              granularityInMs: $('#history_granularity').val(),
-              start_date: $('#history_from').val(),
-              end_date: $('#history_to').val()
-          },
-          success: function(data, res){
-              $.each(data, function(key, item){
-                  var date = new Date(item.id.date);
-                  delete item.id;
-                  item.date = date;
-              })
-              
-              detail.dataSet.dataProvider = data;
-              detail.chart.validateData();
-          },
-        });
-    }
-    
-    
     $('#run_strategy').click(function() {
     	$('#strategy_body').removeClass('hidden');
-    	run_strategy();    	
+    	get_strategy_result();
+    	oTable.draw();
     })
     
     $('#history_exchange, #history_trading_pair, #history_granularity').change(function() {
