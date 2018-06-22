@@ -434,7 +434,7 @@ jQuery(document).ready(function() {
     })
     
     $('#display_on_chart').change(function(){
-    	oTable.draw();
+    	alert("display on chart");
     })
     
     $('#time_range_select').change(function() {

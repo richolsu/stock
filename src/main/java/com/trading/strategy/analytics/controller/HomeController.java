@@ -136,8 +136,8 @@ public class HomeController {
 
 		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
 				+ " " + endMs);
-		Page<StrategySearchItem> result = strategyRepository.findAllForStrategy(exchange, symbol, granularityMs,
-				importance, startMs, endMs, request);
+		Page<StrategySearchItem> result = strategyRepository.findAllForStrategy(strategy, exchange, symbol,
+				granularityMs, importance, startMs, endMs, request);
 
 		return result;
 	}
