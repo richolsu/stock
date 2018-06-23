@@ -36,194 +36,193 @@ var formatTime = function(unixTimestamp) {
 }     
 
 function createStockChart(tragetDivId) {
-	var chart = new AmCharts.AmStockChart();
-
-
-	// DATASET //////////////////////////////////////////
-	var dataSet = new AmCharts.DataSet();
-	dataSet.fieldMappings = [{
-        fromField: "open",
-        toField: "open"
-    }, {
-        fromField: "close",
-        toField: "close"
-    }, {
-        fromField: "high",
-        toField: "high"
-    }, {
-        fromField: "low",
-        toField: "low"
-    }, {
-        fromField: "volume",
-        toField: "volume"
-    }, {
-        fromField: "value",
-        toField: "value"
-    }, {
-        fromField: "color",
-        toField: "color"        	
-    }, {
-        fromField: "count",
-        toField: "count"
-    }];
-    dataSet.color = "#fff";
-    dataSet.dataProvider = [];
-    dataSet.title = "Stock";
-    dataSet.categoryField = "date";
-    dataSet.compared = false;
-
-	chart.dataSets = [dataSet];
+	var chart = AmCharts.makeChart(tragetDivId, {
+	  "type": "stock",
+	  "theme": "none",
 	
-	var plSettings = new AmCharts.PanelsSettings();
-	plSettings.color = "#888";
-	plSettings.plotAreaFillColors = "#333";
-	plSettings.plotAreaFillAlphas = 1;
-
-	chart.panelsSettings = plSettings;
+	  // "color": "#fff",
+	  "dataSets": [ {
+		"dataProvider":[],
+	    "title": "MSFT",
+	    "fieldMappings": [ {
+	      "fromField": "open",
+	      "toField": "open"
+	    }, {
+	      "fromField": "high",
+	      "toField": "high"
+	    }, {
+	      "fromField": "low",
+	      "toField": "low"
+	    }, {
+	      "fromField": "close",
+	      "toField": "close"
+	    }, {
+	      "fromField": "volume",
+	      "toField": "volume"
+	    } ],
+	    "compared": false,
+	    "categoryField": "date",
+	  } ],
 	
-    var cateAxes = new AmCharts.CategoryAxesSettings();
-    cateAxes.equalSpacing = true;
-    cateAxes.maxSeries = 2400;
-    cateAxes.minPeriod = "hh";
-    cateAxes.groupToPeriods = ["ss", "10ss", "30ss", "mm", "10mm", "30mm", "hh", "DD", "WW", "MM", "YYYY"];	
-    cateAxes.gridColor = "#acacac";
-    cateAxes.gridAlpha = 1;
-
-    chart.categoryAxesSettings = cateAxes;
-    
-    var valAxes = new AmCharts.ValueAxesSettings();
-    valAxes.gridColor = "#acacac";
-    valAxes.gridAlpha = 1;
-    //valAxes.inside = false;
-    valAxes.showLastLabel = true;
-
-    chart.valueAxesSettings = valAxes;    
-    
-    // PANELS ///////////////////////////////////////////
-    var stockPanel = new AmCharts.StockPanel();
-    stockPanel.title = "Value";
-    stockPanel.showCategoryAxis = false;
-    stockPanel.percentHeight = 70;
-
-    var valueAxis = new AmCharts.ValueAxis();
-    valueAxis.dashLength = 5;
-    stockPanel.addValueAxis(valueAxis);
-
-    stockPanel.categoryAxis.dashLength = 5;
-
-    // graph of first stock panel
-    var graph = new AmCharts.StockGraph();
-    graph.type = "candlestick";
-    graph.openField = "open";
-    graph.closeField = "close";
-    graph.highField = "high";
-    graph.lowField = "low";
-    graph.valueField = "close";
-    graph.lineColor = "#11edf1";
-    graph.fillColors = "#11edf1";
-    graph.negativeLineColor = "#db4c3c";
-    graph.negativeFillColors = "#db4c3c";
-    graph.proCandlesticks = true;
-    graph.fillAlphas = 1;
-    graph.useDataSetColors = false;
-    graph.showBalloon = false;
-    stockPanel.addStockGraph(graph);
-
-    var stockLegend = new AmCharts.StockLegend();
-    stockLegend.valueTextRegular = "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]]";
-    //stockLegend.periodValueTextComparing = "[[percents.value.close]]%";
-    stockPanel.stockLegend = stockLegend;
-
-    var chartCursor = new AmCharts.ChartCursor();
-    chartCursor.valueLineEnabled = true;
-    chartCursor.valueLineAxis = valueAxis;
-    stockPanel.chartCursor = chartCursor;
-
-    var stockPanel2 = new AmCharts.StockPanel();
-    stockPanel2.title = "Volume";
-    stockPanel2.percentHeight = 30;
-    stockPanel2.marginTop = 1;
-    stockPanel2.showCategoryAxis = true;
-
-    var valueAxis2 = new AmCharts.ValueAxis();
-    valueAxis2.dashLength = 5;
-
-    stockPanel2.addValueAxis(valueAxis2);
-
-    stockPanel2.categoryAxis.dashLength = 5;
-
-    var graph2 = new AmCharts.StockGraph();
-    graph2.valueField = "volume";
-    graph2.countField = "count";
-    graph2.type = "column";
-    graph2.showBalloon = true;
-    graph2.balloonText = "Count: <b>[[count]]</b>";
-    graph2.fillColorsField = "color";
-    graph2.fillAlphas = 1;
-    stockPanel2.addStockGraph(graph2);
-
-    var legend2 = new AmCharts.StockLegend();
-    legend2.markerType = "none";
-    legend2.markerSize = 0;
-    legend2.labelText = "";
-    //legend2.periodValueTextRegular = "[[value.close]]";*/
-    legend2.valueTextRegular = "Volume: [[volume]]";
-    stockPanel2.stockLegend = legend2;
-
-    var chartCursor2 = new AmCharts.ChartCursor();
-    chartCursor2.valueLineEnabled = true;
-    chartCursor2.valueLineAxis = valueAxis2;
-    stockPanel2.chartCursor = chartCursor2;
-
-    chart.panels = [stockPanel, stockPanel2];
-
-
-    // OTHER SETTINGS ////////////////////////////////////
-    var sbsettings = new AmCharts.ChartScrollbarSettings();
-    sbsettings.graph = graph;
-    sbsettings.graphType = "line";
-    sbsettings.usePeriod = "hh";
-    sbsettings.updateOnReleaseOnly = false;
-    chart.chartScrollbarSettings = sbsettings;
-
-
-    // PERIOD SELECTOR ///////////////////////////////////
-    var periodSelector = new AmCharts.PeriodSelector();
-    periodSelector.position = "bottom";
-    periodSelector.periods = [{
-        period: "DD",
-        count: 10,
-        label: "10 days"
-    }, {
-        period: "MM",
-        selected: true,
-        count: 1,
-        label: "1 month"
-    }, {
-        period: "YYYY",
-        count: 1,
-        label: "1 year"
-    }, {
-        period: "YTD",
-        label: "YTD"
-    }, {
-        period: "MAX",
-        label: "MAX"
-    }];
-    chart.periodSelector = periodSelector;
-    
-    var chartCursorSettings = new AmCharts.ChartCursorSettings();
-    chartCursorSettings.fullWidth = true;
-//    chartCursorSettings.cursorColor = '#fff';
-    chartCursorSettings.cursorAlpha = 0.1;
-    chartCursorSettings.valueLineAlpha = 0.5;
-    chartCursorSettings.cursorPosition = "middle";
-    chart.chartCursorSettings = chartCursorSettings;
-
-	chart.write(tragetDivId);
+	  "panels": [ {
+	      "title": "Value",
+	      "percentHeight": 70,
 	
-	return {chart:chart, dataSet:dataSet};
+	      "stockGraphs": [ {
+	        "type": "candlestick",
+	        "id": "g1",
+	        "openField": "open",
+	        "closeField": "close",
+	        "highField": "high",
+	        "lowField": "low",
+	        "valueField": "close",
+	        "lineColor": "#fff",
+	        "fillColors": "#fff",
+	        "negativeLineColor": "#db4c3c",
+	        "negativeFillColors": "#db4c3c",
+	        "fillAlphas": 1,
+	        "comparedGraphLineThickness": 2,
+	        "columnWidth": 0.7,
+	        "useDataSetColors": false,
+	        "comparable": true,
+	        "compareField": "close",
+	        "showBalloon": false,
+	        "proCandlesticks": true
+	      } ],
+	
+	      "stockLegend": {
+	        "valueTextRegular": undefined,
+	        "periodValueTextComparing": "[[percents.value.close]]%"
+	      }
+	
+	    },
+	
+	    {
+	      "title": "Volume",
+	      "percentHeight": 30,
+	      "marginTop": 1,
+	      "columnWidth": 0.6,
+	      "showCategoryAxis": false,
+	
+	      "stockGraphs": [ {
+	        "valueField": "volume",
+	        "openField": "open",
+	        "type": "column",
+	        "showBalloon": false,
+	        "fillAlphas": 1,
+	        "lineColor": "#fff",
+	        "fillColors": "#fff",
+	        "negativeLineColor": "#db4c3c",
+	        "negativeFillColors": "#db4c3c",
+	        "useDataSetColors": false
+	      } ],
+	
+	      "stockLegend": {
+	        "markerType": "none",
+	        "markerSize": 0,
+	        "labelText": "",
+	        "periodValueTextRegular": "[[value.close]]"
+	      },
+	
+	      "valueAxes": [ {
+	        "usePrefixes": true
+	      } ]
+	    }
+	  ],
+	
+	  "panelsSettings": {
+	    // "color": "#fff",
+	    "plotAreaFillColors": "#333",
+	    "plotAreaFillAlphas": 1,
+	    "marginLeft": 60,
+	    "marginTop": 5,
+	    "marginBottom": 5
+	  },
+	
+	  "chartScrollbarSettings": {
+	    "graph": "g1",
+	    "graphType": "line",
+	    "usePeriod": "WW",
+	    "backgroundColor": "#333",
+	    "graphFillColor": "#666",
+	    "graphFillAlpha": 0.5,
+	    "gridColor": "#555",
+	    "gridAlpha": 1,
+	    "selectedBackgroundColor": "#444",
+	    "selectedGraphFillAlpha": 1
+	  },
+	
+	  "categoryAxesSettings": {
+	    "equalSpacing": true,
+	    "gridColor": "#555",
+	    "gridAlpha": 1
+	  },
+	
+	  "valueAxesSettings": {
+	    "gridColor": "#555",
+	    "gridAlpha": 1,
+	    "inside": false,
+	    "showLastLabel": true
+	  },
+	
+	  "chartCursorSettings": {
+	    "pan": true,
+	    "valueLineEnabled": true,
+	    "valueLineBalloonEnabled": true
+	  },
+	
+	  "legendSettings": {
+	    // "color": "#fff"
+	  },
+	
+	  "stockEventsSettings": {
+	    "showAt": "high",
+	    "type": "pin"
+	  },
+	
+	  "balloon": {
+	    "textAlign": "left",
+	    "offsetY": 10
+	  },
+	
+	  "periodSelector": {
+	    "position": "bottom",
+	    "periods": [ {
+	        "period": "DD",
+	        "count": 10,
+	        "label": "10D"
+	      }, {
+	        "period": "MM",
+	        "count": 1,
+	        "label": "1M"
+	      }, {
+	        "period": "MM",
+	        "count": 6,
+	        "label": "6M"
+	      }, {
+	        "period": "YYYY",
+	        "count": 1,
+	        "label": "1Y"
+	      }, {
+	        "period": "YYYY",
+	        "count": 2,
+	        "selected": true,
+	        "label": "2Y"
+	      },
+	      /*
+			 * { "period": "YTD", "label": "YTD" },
+			 */
+	      {
+	        "period": "MAX",
+	        "label": "MAX"
+	      }
+	    ]
+	  }
+	});
+	
+	return {chart:chart, dataSet:chart.dataSet};
 }
+
 
 var histo, detail, compare1, compare2;
 
@@ -336,7 +335,7 @@ jQuery(document).ready(function() {
         	  histo.chart.categoryAxesSettings.minPeriod = "6hh";
         	  histo.chart.chartScrollbarSettings.usePeriod = "6hh";
               
-        	  histo.dataSet.dataProvider = data;
+        	  histo.chart.dataSets[0].dataProvider = data;
         	  histo.chart.validateData();
     
 
@@ -384,7 +383,8 @@ jQuery(document).ready(function() {
               detail.chart.categoryAxesSettings.groupToPeriods = ["2ss"];	
               detail.chart.categoryAxesSettings.minPeriod = "1ss";
               detail.chart.chartScrollbarSettings.usePeriod = "1ss";
-              detail.dataSet.dataProvider = data;
+              
+              detail.chart.dataSets[0].dataProvider = data;
               detail.chart.validateData();
     
           },

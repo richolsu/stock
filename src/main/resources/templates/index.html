@@ -52,14 +52,13 @@ table.dataTable tbody tr.selected {
                                     <option value="360" selected>6 hours</option>
                                     <option value="60">1 hour</option>
                                     <option value="15">15 min</option>
-                                    <option value="1">1 min</option>
                                 </select>
                             </div>                            
                             
                         </div>
                     </div>
                     <div class="portlet-body">    
-                        <div id="history_chart" class="chart " style="height: 300px;"> </div>                    
+                        <div id="history_chart" class="chart " style="height: 500px;"> </div>                    
                     </div>
                 </div>
                 <div class="portlet light ">
@@ -131,7 +130,7 @@ table.dataTable tbody tr.selected {
                                 <option value="6000">6 minutes</option>
                             </select>
                         </div>
-                        <div id="detail_chart" class="chart" style="height: 300px;"> </div>
+                        <div id="detail_chart" class="chart" style="height: 500px;"> </div>
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
@@ -148,7 +147,7 @@ table.dataTable tbody tr.selected {
                                 <option value="ETH-USD">ETH-USD</option>
                             </select>
                         </div>
-                        <div id="compare_chart_1" class="chart hidden" style="height: 300px;"> </div>
+                        <div id="compare_chart_1" class="chart hidden" style="height: 500px;"> </div>
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
@@ -165,7 +164,7 @@ table.dataTable tbody tr.selected {
                                 <option value="ETH-USD">ETH-USD</option>
                             </select>
                         </div>
-                        <div id="compare_chart_2" class="chart hidden" style="height: 300px;"> </div>
+                        <div id="compare_chart_2" class="chart hidden" style="height: 500px;"> </div>
                     </div>
                 </div>
             </div>
@@ -180,5 +179,5 @@ var strategy_run_url = /*[[@{/strategy/run}]]*/'';
 var detail_url = /*[[@{/detail_data}]]*/'';
 var strategy_list_url = /*[[@{/strategy/list}]]*/'';
 </script>
-<script th:src="@{/assets/scripts/page/chart.js}" type="text/javascript"></script>
+<script th:src="@{/assets/scripts/page/chart4.js}" type="text/javascript"></script>
 
