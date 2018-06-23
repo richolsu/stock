@@ -171,6 +171,31 @@ function createStockChart(tragetDivId) {
               "maxSeries" : 240000,
               "minPeriod" : "1DD",
               "gridColor" : "#ffffff",
+              "dateFormats" : [ {
+                period : 'fff',
+                format : 'JJ:NN:SS.fff'
+              }, {
+                period : 'ss',
+                format : 'JJ:NN:SS'
+              }, {
+                period : 'mm',
+                format : 'JJ:NN'
+              }, {
+                period : 'hh',
+                format : 'LA'
+              }, {
+                period : 'DD',
+                format : 'MMM DD'
+              }, {
+                period : 'WW',
+                format : 'MMM DD'
+              }, {
+                period : 'MM',
+                format : 'MMM'
+              }, {
+                period : 'YYYY',
+                format : 'YYYY'
+              } ]
             },
 
             "valueAxesSettings" : {
@@ -188,7 +213,7 @@ function createStockChart(tragetDivId) {
                 format : 'JJ:NN'
               }, {
                 period : 'hh',
-                format : 'A'
+                format : 'LA'
               }, {
                 period : 'DD',
                 format : 'MMM DD'
@@ -226,7 +251,7 @@ function createStockChart(tragetDivId) {
                 format : "MMM DD, YYYY"
               }, {
                 period : "hh",
-                format : "JJ:NN"
+                format : "LA"
               }, {
                 period : "mm",
                 format : "JJ:NN"
@@ -258,14 +283,6 @@ function createStockChart(tragetDivId) {
               "inputFieldsEnabled" : false,
               "position" : "bottom",
               "periods" : [ {
-                "period" : "mm",
-                "count" : 1,
-                "label" : "1 Min"
-              }, {
-                "period" : "mm",
-                "count" : 30,
-                "label" : "30 mins"
-              }, {
                 "period" : "hh",
                 "count" : 1,
                 "label" : "1 Hour"
@@ -409,83 +426,22 @@ jQuery(document).ready(
               case "1440":
                 histo.categoryAxesSettings.minPeriod = "DD";
                 histo.chartScrollbarSettings.usePeriod = "DD";
-                histo.chartScrollbarSettings.dateFormats = [ {
-                  period : 'DD',
-                  format : 'MMM DD'
-                }, ];
-                histo.valueAxesSettings.periodSelector = {
-                  "position" : "bottom",
-                  "periods" : [ {
-                    "period" : "DD",
-                    "count" : 15,
-                    "label" : "15 Days"
-                  }, {
-                    "period" : "MM",
-                    "count" : 1,
-                    "label" : "1 Month"
-                  }, {
-                    "period" : "MAX",
-                    "label" : "MAX"
-                  } ]
-                };
                 break;
               case "360":
-                histo.categoryAxesSettings.groupToPeriods = [ "6hh" ];
                 histo.categoryAxesSettings.minPeriod = "6hh";
                 histo.chartScrollbarSettings.usePeriod = "6hh";
-                histo.chartScrollbarSettings.dateFormats = [ {
-                  period : 'hh',
-                  format : 'MMM DD A'
-                }, {
-                  period : '6hh',
-                  format : 'MMM DD A'
-                }, ];
-                histo.valueAxesSettings.periodSelector = {
-                  "position" : "bottom",
-                  "periods" : [ {
-                    "period" : "DD",
-                    "count" : 1,
-                    "label" : "1 Day"
-                  }, {
-                    "period" : "DD",
-                    "count" : 15,
-                    "label" : "15 Days"
-                  }, {
-                    "period" : "MM",
-                    "count" : 1,
-                    "label" : "1 Month"
-                  }, {
-                    "period" : "MAX",
-                    "label" : "MAX"
-                  } ]
-                };
                 break;
               case "60":
-                histo.categoryAxesSettings.groupToPeriods = [ "2hh" ];
                 histo.categoryAxesSettings.minPeriod = "1hh";
                 histo.chartScrollbarSettings.usePeriod = "1hh";
-                histo.chartScrollbarSettings.dateFormats = [ {
-                  period : 'hh',
-                  format : 'A'
-                }, {
-                  period : '1hh',
-                  format : 'A'
-                }, ];
                 break;
               case "15":
-                histo.categoryAxesSettings.groupToPeriods = [ "30mm" ];
                 histo.categoryAxesSettings.minPeriod = "15mm";
                 histo.chartScrollbarSettings.usePeriod = "15mm";
-                histo.chartScrollbarSettings.dateFormats = [ {
-                  period : '15mm',
-                  format : 'JJ:NN'
-                }, ];
                 break;
             }
 
             histo.dataSets[0].dataProvider = data;
-
-            // histo.write("history_chart");
             histo.validateData();
 
           },
@@ -533,26 +489,18 @@ jQuery(document).ready(
 
             switch ($('#time_range_select').val()) {
               case "100":
-                detail.categoryAxesSettings.groupToPeriods = [ "100fff" ];
                 detail.categoryAxesSettings.minPeriod = "100fff";
                 detail.chartScrollbarSettings.usePeriod = "100fff";
-                detail.chartScrollbarSettings.dateFormats = [ {
-                  period : '100fff',
-                  format : 'JJ:NN:SS.fff'
-                }, ];
                 break;
               case "1000":
-                detail.categoryAxesSettings.groupToPeriods = [ "1ss" ];
                 detail.categoryAxesSettings.minPeriod = "1ss";
                 detail.chartScrollbarSettings.usePeriod = "1ss";
                 break;
               case "3000":
-                detail.categoryAxesSettings.groupToPeriods = [ "3ss" ];
                 detail.categoryAxesSettings.minPeriod = "3ss";
                 detail.chartScrollbarSettings.usePeriod = "3ss";
                 break;
               case "6000":
-                detail.categoryAxesSettings.groupToPeriods = [ "6ss" ];
                 detail.categoryAxesSettings.minPeriod = "6ss";
                 detail.chartScrollbarSettings.usePeriod = "6ss";
                 break;
@@ -624,10 +572,28 @@ jQuery(document).ready(
                 item.count = 0;
               }
             })
+            
+            switch ($('#time_range_select').val()) {
+              case "100":
+                compare1.categoryAxesSettings.minPeriod = "100fff";
+                compare1.chartScrollbarSettings.usePeriod = "100fff";
+                break;
+              case "1000":
+                compare1.categoryAxesSettings.minPeriod = "1ss";
+                compare1.chartScrollbarSettings.usePeriod = "1ss";
+                break;
+              case "3000":
+                compare1.categoryAxesSettings.minPeriod = "3ss";
+                compare1.chartScrollbarSettings.usePeriod = "3ss";
+                break;
+              case "6000":
+                compare1.categoryAxesSettings.minPeriod = "6ss";
+                compare1.chartScrollbarSettings.usePeriod = "6ss";
+                break;
+            }
 
-            compare1.dataSet.dataProvider = data;
-            compare1.chart.validateData();
-
+            compare1.dataSets[0].dataProvider = data;
+            compare1.validateData();
           },
         });
 
@@ -669,8 +635,27 @@ jQuery(document).ready(
               }
             })
 
-            compare2.dataSet.dataProvider = data;
-            compare2.chart.validateData();
+            switch ($('#time_range_select').val()) {
+              case "100":
+                compare2.categoryAxesSettings.minPeriod = "100fff";
+                compare2.chartScrollbarSettings.usePeriod = "100fff";
+                break;
+              case "1000":
+                compare2.categoryAxesSettings.minPeriod = "1ss";
+                compare2.chartScrollbarSettings.usePeriod = "1ss";
+                break;
+              case "3000":
+                compare2.categoryAxesSettings.minPeriod = "3ss";
+                compare2.chartScrollbarSettings.usePeriod = "3ss";
+                break;
+              case "6000":
+                compare2.categoryAxesSettings.minPeriod = "6ss";
+                compare2.chartScrollbarSettings.usePeriod = "6ss";
+                break;
+            }
+
+            compare2.dataSets[0].dataProvider = data;
+            compare2.validateData();
 
           },
         });
