@@ -302,7 +302,22 @@ function createStockChart(tragetDivId) {
                 "period" : "MAX",
                 "label" : "MAX"
               } ]
-            }
+            },
+            "listeners": [{
+              "event": "dataUpdated",
+              "method": function(e) {
+                for (var x in e.chart.periodSelector.periods) {
+                  var period = e.chart.periodSelector.periods[x];
+                  if ('MAX' == period.period) {
+                    period.selected = true;
+                  } else {
+                    period.selected = false;
+                  }
+                }
+
+                e.chart.periodSelector.setDefaultPeriod();
+              }
+            }]
           });
 
   return chart;
@@ -407,7 +422,6 @@ jQuery(document).ready(
           success : function(data, res) {
             $.each(data, function(key, item) {
               if (item.importance > $('#analytics_threshold').val()) {
-                console.log(item);
                 item.color = '#ff00ff';
               } else {
                 item.count = 0;
@@ -479,7 +493,6 @@ jQuery(document).ready(
 
             $.each(data, function(key, item) {
               if (item.importance > $('#analytics_threshold').val()) {
-                console.log(item);
                 item.color = '#ff0000';
               } else {
                 item.count = 0;
@@ -567,7 +580,6 @@ jQuery(document).ready(
 
             $.each(data, function(key, item) {
               if (item.importance > $('#analytics_threshold').val()) {
-                console.log(item);
               } else {
                 item.count = 0;
               }
@@ -629,7 +641,6 @@ jQuery(document).ready(
 
             $.each(data, function(key, item) {
               if (item.importance > $('#analytics_threshold').val()) {
-                console.log(item);
               } else {
                 item.count = 0;
               }
