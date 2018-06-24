@@ -406,20 +406,8 @@ jQuery(document).ready(
           },
           success : function(data, res) {
             $.each(data, function(key, item) {
-              if (item.importance > $('#analytics_threshold').val()) {
-                console.log(item);
-                item.color = '#ff00ff';
-              } else {
-                item.count = 0;
-                item.color = '#00ffff';
-              }
-
-              if (item.date % 2500000 == 0) {
-                item.color = '#F7CA18';
-                item.count = item.date;
-              } else {
-                item.color = '#22272c';
-              }
+            	item.count = 0;
+            	item.color = '#22272c';
             })
 
             switch ($('#history_granularity').val()) {
@@ -729,15 +717,28 @@ jQuery(document).ready(
         
         if ($('#display_on_chart').is(':checked')) {
           if (strategy_result != undefined) {
-            $.each(histo.dataSets[0], function(key, value) {
-              console.log(value);
-            })
-            $.each(strategy_result, function(key, value) {
-              console.log(value);
+        	var dt = $('#history_granularity').val() * 60000;
+            $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
+            	var group_cnt = 0;
+            	$.each(strategy_result, function(key, stg_value) {
+            		if (hist_value.date <= stg_value && stg_value <= hist_value.date + dt) {
+            			group_cnt++;
+            		}
+            	})
+            	
+            	if (group_cnt > 0) {
+            		hist_value.color = '#F7CA18';
+            	}
+            	hist_value.count = group_cnt;
             })
           }
-        }else{
-          
+          histo.validateData();
+        }
+        else {
+        	 $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
+        		 hist_value.color = '#22272c';
+        	 })
+        	 histo.validateData();
         }
         
       })
