@@ -756,19 +756,29 @@ jQuery(document).ready(
       function display_on_chart() {
         
         if ($('#display_on_chart').is(':checked')) {
-          $.each(histo.dataSets[0].dataProvider, function(key, item) {
-            if (item.count>0) {
-              item.color = hightlight_bar_color;
+          var dt = $('#history_granularity').val() * 60000;
+          $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
+            var group_cnt = 0;
+            $.each(strategy_result, function(key, stg_value) {
+              if (hist_value.date <= stg_value && stg_value <= hist_value.date + dt) {
+                group_cnt++;
+              }
+            })
+            
+            hist_value.count = group_cnt;
+            
+            if (hist_value.count>0) {
+              hist_value.color = hightlight_bar_color;
             } else {
-              item.color = normal_bar_color;
+              hist_value.color = normal_bar_color;
             }
-            item.color = hightlight_bar_color;
+
           });
           histo.panels[1].stockGraphs[0].showBalloon = true;
           
         }else{
-          $.each(histo.dataSets[0].dataProvider, function(key, item) {
-            item.color = normal_bar_color;
+          $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
+            hist_value.color = normal_bar_color;
             histo.panels[1].stockGraphs[0].showBalloon = false;
           });
         }
