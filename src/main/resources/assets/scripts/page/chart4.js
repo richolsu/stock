@@ -412,26 +412,20 @@ jQuery(document).ready(
           url : history_url,
           data : {
             strategy : $('#analytics_strategy').val(),
+            group_size: $('#analytics_group_size').val(),
+            threshold : $('#analytics_threshold').val(),
             exchange : $('#history_exchange').val(),
             symbol : $('#history_trading_pair').val(),
             granularityInMs : $('#history_granularity').val(),
-            threshold : $('#analytics_threshold').val(),
             start_date : $('#history_from').val(),
             end_date : $('#history_to').val()
           },
           success : function(data, res) {
             $.each(data, function(key, item) {
-              if (item.importance > $('#analytics_threshold').val()) {
-                item.color = '#ff00ff';
+              if (item.count>0) {
+                item.color = '#f3c200';
               } else {
                 item.count = 0;
-                item.color = '#00ffff';
-              }
-
-              if (item.date % 2500000 == 0) {
-                item.color = '#F7CA18';
-                item.count = item.date;
-              } else {
                 item.color = '#22272c';
               }
             })
@@ -478,9 +472,10 @@ jQuery(document).ready(
           url : detail_url,
           data : {
             strategy : $('#analytics_strategy').val(),
+            group_size: $('#analytics_group_size').val(),
+            threshold : $('#analytics_threshold').val(),
             exchange : $('#history_exchange').val(),
             symbol : $('#history_trading_pair').val(),
-            threshold : $('#analytics_threshold').val(),
             granularityInMs : $('#time_range_select').val(),
             start_date : startMs,
             end_date : endMs
@@ -492,11 +487,11 @@ jQuery(document).ready(
             }
 
             $.each(data, function(key, item) {
-              if (item.importance > $('#analytics_threshold').val()) {
-                item.color = '#ff0000';
+              if (item.count>0) {
+                item.color = '#f3c200';
               } else {
                 item.count = 0;
-                item.color = '#00ff00';
+                item.color = '#22272c';
               }
             })
 
@@ -565,6 +560,7 @@ jQuery(document).ready(
           url : detail_url,
           data : {
             strategy : $('#analytics_strategy').val(),
+            group_size: $('#analytics_group_size').val(),
             threshold : $('#analytics_threshold').val(),
             exchange : $('#compare1_exchange').val(),
             symbol : $('#compare1_trading_pair').val(),
@@ -626,6 +622,7 @@ jQuery(document).ready(
           url : detail_url,
           data : {
             strategy : $('#analytics_strategy').val(),
+            group_size: $('#analytics_group_size').val(),
             threshold : $('#analytics_threshold').val(),
             exchange : $('#compare2_exchange').val(),
             symbol : $('#compare2_trading_pair').val(),
@@ -739,17 +736,20 @@ jQuery(document).ready(
       $('#display_on_chart').change(function(a, b, c) {
         
         if ($('#display_on_chart').is(':checked')) {
-          if (strategy_result != undefined) {
-            $.each(histo.dataSets[0], function(key, value) {
-              console.log(value);
-            })
-            $.each(strategy_result, function(key, value) {
-              console.log(value);
-            })
-          }
+          $.each(histo.dataSets[0].dataProvider, function(key, item) {
+            if (item.count>0) {
+              item.color = '#f3c200';
+            } else {
+              item.color = '#22272c';
+            }
+          });
         }else{
-          
+          $.each(histo.dataSets[0].dataProvider, function(key, item) {
+            item.color = '#22272c';
+          });
         }
+        
+        histo.validateData();
         
       })
 

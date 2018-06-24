@@ -49,6 +49,7 @@ public class HomeController {
 		String symbol = requestParams.get("symbol");
 		String granularityInMs = requestParams.get("granularityInMs");
 		String threshold = requestParams.get("threshold");
+		String groupSize = requestParams.get("group_size");
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
@@ -64,10 +65,11 @@ public class HomeController {
 		}
 
 		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
+		Long groupSizeMs = Long.parseLong(groupSize);
 		Double importance = Double.parseDouble(threshold);
 
-		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, exchange, symbol, granularityMs,
-				importance, startMs, endMs);
+		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, groupSizeMs, exchange, symbol,
+				granularityMs, importance, startMs, endMs);
 
 		return result;
 	}
@@ -82,14 +84,16 @@ public class HomeController {
 		String threshold = requestParams.get("threshold");
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
+		String groupSize = requestParams.get("group_size");
 
 		Long startMs = Long.parseLong(startDate);
 		Long endMs = Long.parseLong(endDate);
 		Long granularityMs = Long.parseLong(granularityInMs);
 		Double importance = Double.parseDouble(threshold);
+		Long groupSizeMs = Long.parseLong(groupSize);
 
-		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, exchange, symbol, granularityMs,
-				importance, startMs, endMs);
+		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, groupSizeMs, exchange, symbol,
+				granularityMs, importance, startMs, endMs);
 
 		return result;
 	}
