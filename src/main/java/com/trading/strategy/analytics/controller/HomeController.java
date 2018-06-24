@@ -68,8 +68,7 @@ public class HomeController {
 		Long groupSizeMs = Long.parseLong(groupSize);
 		Double importance = Double.parseDouble(threshold);
 
-		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, groupSizeMs, exchange, symbol,
-				granularityMs, importance, startMs, endMs);
+		List<HistoryResult> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 
 		return result;
 	}
@@ -92,8 +91,7 @@ public class HomeController {
 		Double importance = Double.parseDouble(threshold);
 		Long groupSizeMs = Long.parseLong(groupSize);
 
-		List<HistoryResult> result = ohlcRepository.findAllForHistory(strategy, groupSizeMs, exchange, symbol,
-				granularityMs, importance, startMs, endMs);
+		List<HistoryResult> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 
 		return result;
 	}
