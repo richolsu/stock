@@ -1,5 +1,6 @@
 package com.trading.strategy.analytics.controller;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -126,8 +127,8 @@ public class HomeController {
 		return result;
 	}
 
-	@RequestMapping(value = "/strategy/list", produces = "application/json")
-	public @ResponseBody Page<StrategySearchItem> strategy(@RequestParam Map<String, String> requestParams) {
+	@RequestMapping(value = "/strategy/page", produces = "application/json")
+	public @ResponseBody Page<StrategySearchItem> strategyPageResult(@RequestParam Map<String, String> requestParams) {
 
 		String strategy = requestParams.get("strategy");
 		String exchange = requestParams.get("exchange");
@@ -164,6 +165,39 @@ public class HomeController {
 				+ " " + endMs);
 		Page<StrategySearchItem> result = strategyRepository.findAllForStrategy(strategy, exchange, symbol,
 				granularityMs, importance, startMs, endMs, request);
+
+		return result;
+	}
+
+	@RequestMapping(value = "/strategy/all", produces = "application/json")
+	public @ResponseBody List<BigInteger> strategyAll(@RequestParam Map<String, String> requestParams) {
+
+		String strategy = requestParams.get("strategy");
+		String exchange = requestParams.get("exchange");
+		String symbol = requestParams.get("symbol");
+		String granularityInMs = requestParams.get("granularityInMs");
+		String threshold = requestParams.get("threshold");
+		String startDate = requestParams.get("start_date");
+		String endDate = requestParams.get("end_date");
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
+		try {
+			startMs = dateFormat.parse(startDate).getTime();
+			endMs = dateFormat.parse(endDate).getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Long granularityMs = Long.parseLong(granularityInMs);
+		Double importance = Double.parseDouble(threshold);
+
+		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
+				+ " " + endMs);
+		List<BigInteger> result = strategyRepository.findListForResult(strategy, exchange, symbol, granularityMs,
+				importance, startMs, endMs);
 
 		return result;
 	}

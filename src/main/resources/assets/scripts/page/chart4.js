@@ -308,7 +308,7 @@ function createStockChart(tragetDivId) {
   return chart;
 }
 
-var histo, detail, compare1, compare2;
+var histo, detail, compare1, compare2, strategy_result;
 
 jQuery(document).ready(
     function() {
@@ -324,7 +324,7 @@ jQuery(document).ready(
         searching : false,
         ordering : true,
         ajax : {
-          url : strategy_list_url,
+          url : strategy_page_url,
           type : "POST",
           data : function(data) {
             var filter = {
@@ -662,12 +662,33 @@ jQuery(document).ready(
 
       }
 
+      function update_strategy_all_result() {
+        $.ajax({
+          type : "POST",
+          url : strategy_all_url,
+          data : {
+            strategy : $('#analytics_strategy').val(),
+            exchange : $('#history_exchange').val(),
+            symbol : $('#history_trading_pair').val(),
+            threshold : $('#analytics_threshold').val(),
+            granularityInMs : $('#analytics_group_size').val(),
+            start_date : $('#history_from').val(),
+            end_date : $('#history_to').val()
+          },
+          success : function(data, res) {
+            strategy_result = data;
+          }
+        });
+      }
+      
       $('#run_strategy').click(function() {
         $('#strategy_body').removeClass('hidden');
         if (detail == undefined)
           detail = createStockChart('detail_chart');
 
         get_strategy_result();
+        update_strategy_all_result();
+        
         oTable.draw();
       })
 
@@ -704,8 +725,21 @@ jQuery(document).ready(
             }
           })
 
-      $('#display_on_chart').change(function() {
-        alert("display on chart");
+      $('#display_on_chart').change(function(a, b, c) {
+        
+        if ($('#display_on_chart').is(':checked')) {
+          if (strategy_result != undefined) {
+            $.each(histo.dataSets[0], function(key, value) {
+              console.log(value);
+            })
+            $.each(strategy_result, function(key, value) {
+              console.log(value);
+            })
+          }
+        }else{
+          
+        }
+        
       })
 
       $('#time_range_select').change(function() {
