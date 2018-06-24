@@ -418,6 +418,8 @@ jQuery(document).ready(
       }
       
       function refresh_history_chart() {
+        
+        $('#display_on_chart').prop('checked', false);
         $.ajax({
           beforeSend: function(){
             blockUI('#history_chart');
