@@ -78,13 +78,10 @@ function createStockChart(tragetDivId) {
             "panels" : [
                 {
                   "showCategoryAxis" : false,
-                  "valueAxis" : {
-                    "dashLength" : 50,
-                    "maxiumum" : 80
-                  },
-                  "categoryAxis" : {
-                    "dashLength" : 5
-                  },
+                  /*
+                   * "valueAxis" : { "dashLength" : 5, "maxiumum" : 80 },
+                   * "categoryAxis" : { "dashLength" : 1 },
+                   */
                   "title" : "Value",
                   "percentHeight" : 70,
 
@@ -125,8 +122,9 @@ function createStockChart(tragetDivId) {
                     "valueField" : "volume",
                     "countField" : "count",
                     "fillColorsField" : "color",
+                    "lineColorField" : "color",
                     "type" : "column",
-                    "showBalloon" : true,
+                    "showBalloon" : false,
                     "balloonText" : "Count: <b>[[count]]</b>",
                     "fillAlphas" : 1,
                     "lineColor" : "#22272c",
@@ -324,7 +322,9 @@ function createStockChart(tragetDivId) {
 }
 
 var histo, detail, compare1, compare2, strategy_result;
-
+var hightlight_bar_color = '#f3c200';
+var normal_bar_color = '#777777';
+  
 jQuery(document).ready(
     function() {
       var today = new Date();
@@ -405,9 +405,26 @@ jQuery(document).ready(
         refresh_history_chart();
       });
 
+      function blockUI(targetId) {
+        App.blockUI({
+            target: targetId,
+            overlayColor: '#ffffff',
+            animate: true
+        });
+      }
+      
+      function unblockUI(targetId) {
+        App.unblockUI(targetId);
+      }
+      
       function refresh_history_chart() {
-
         $.ajax({
+          beforeSend: function(){
+            blockUI('#history_chart');
+          },
+          complete: function(){
+            unblockUI('#history_chart');
+          },
           type : "POST",
           url : history_url,
           data : {
@@ -422,12 +439,8 @@ jQuery(document).ready(
           },
           success : function(data, res) {
             $.each(data, function(key, item) {
-              if (item.count>0) {
-                item.color = '#f3c200';
-              } else {
-                item.count = 0;
-                item.color = '#22272c';
-              }
+              item.count = 0;
+              item.color = normal_bar_color;
             })
 
             switch ($('#history_granularity').val()) {
@@ -468,6 +481,12 @@ jQuery(document).ready(
         endMs = startMs + granularityInMs * 60;
 
         $.ajax({
+          beforeSend: function(){
+            blockUI('#detail_chart');
+          },
+          complete: function(){
+            unblockUI('#detail_chart');
+          },
           type : "POST",
           url : detail_url,
           data : {
@@ -487,12 +506,8 @@ jQuery(document).ready(
             }
 
             $.each(data, function(key, item) {
-              if (item.count>0) {
-                item.color = '#f3c200';
-              } else {
-                item.count = 0;
-                item.color = '#22272c';
-              }
+              item.count = 0;
+              item.color = normal_bar_color;
             })
 
             switch ($('#time_range_select').val()) {
@@ -556,6 +571,12 @@ jQuery(document).ready(
         endMs = startMs + granularityInMs * 60;
 
         $.ajax({
+          beforeSend: function(){
+            blockUI('#compare_chart_1');
+          },
+          complete: function(){
+            unblockUI('#compare_chart_1');
+          },
           type : "POST",
           url : detail_url,
           data : {
@@ -575,10 +596,8 @@ jQuery(document).ready(
             }
 
             $.each(data, function(key, item) {
-              if (item.importance > $('#analytics_threshold').val()) {
-              } else {
-                item.count = 0;
-              }
+              item.count = 0;
+              item.color = normal_bar_color;
             })
             
             switch ($('#time_range_select').val()) {
@@ -618,6 +637,12 @@ jQuery(document).ready(
         endMs = startMs + granularityInMs * 60;
 
         $.ajax({
+          beforeSend: function(){
+            blockUI('#compare_chart_2');
+          },
+          complete: function(){
+            unblockUI('#compare_chart_2');
+          },          
           type : "POST",
           url : detail_url,
           data : {
@@ -637,10 +662,8 @@ jQuery(document).ready(
             }
 
             $.each(data, function(key, item) {
-              if (item.importance > $('#analytics_threshold').val()) {
-              } else {
-                item.count = 0;
-              }
+              item.count = 0;
+              item.color = normal_bar_color;
             })
 
             switch ($('#time_range_select').val()) {
@@ -702,58 +725,67 @@ jQuery(document).ready(
 
       $('#history_exchange, #history_trading_pair, #history_granularity')
           .change(function() {
-
             refresh_history_chart();
           })
 
-      $('#compare1_exchange, #compare1_trading_pair').change(
-          function() {
+      $('#compare1_exchange, #compare1_trading_pair').change(function() {
 
-            if ($('#compare1_exchange').val() != 0
-                && $('#compare1_trading_pair').val() != 0) {
-              $('#compare_chart_1').removeClass('hidden');
-              if (compare1 == undefined)
-                compare1 = createStockChart('compare_chart_1');
-              refresh_compare1_chart();
-            } else {
-              $('#compare_chart_1').addClass('hidden');
-            }
-          })
+        if ($('#compare1_exchange').val() != 0
+            && $('#compare1_trading_pair').val() != 0) {
+          $('#compare_chart_1').removeClass('hidden');
+          if (compare1 == undefined)
+            compare1 = createStockChart('compare_chart_1');
+          refresh_compare1_chart();
+        } else {
+          $('#compare_chart_1').addClass('hidden');
+        }
+      })
 
-      $('#compare2_exchange, #compare2_trading_pair').change(
-          function() {
-            if ($('#compare2_exchange').val() != 0
-                && $('#compare2_trading_pair').val() != 0) {
-              $('#compare_chart_2').removeClass('hidden');
-              if (compare2 == undefined)
-                compare2 = createStockChart('compare_chart_2');
-              refresh_compare2_chart();
-            } else {
-              $('#compare_chart_2').addClass('hidden');
-            }
-          })
+      $('#compare2_exchange, #compare2_trading_pair').change(function() {
+        if ($('#compare2_exchange').val() != 0
+            && $('#compare2_trading_pair').val() != 0) {
+          $('#compare_chart_2').removeClass('hidden');
+          if (compare2 == undefined)
+            compare2 = createStockChart('compare_chart_2');
+          refresh_compare2_chart();
+        } else {
+          $('#compare_chart_2').addClass('hidden');
+        }
+      })
 
-      $('#display_on_chart').change(function(a, b, c) {
+      function display_on_chart() {
         
         if ($('#display_on_chart').is(':checked')) {
           $.each(histo.dataSets[0].dataProvider, function(key, item) {
             if (item.count>0) {
-              item.color = '#f3c200';
+              item.color = hightlight_bar_color;
             } else {
-              item.color = '#22272c';
+              item.color = normal_bar_color;
             }
+            item.color = hightlight_bar_color;
           });
+          histo.panels[1].stockGraphs[0].showBalloon = true;
+          
         }else{
           $.each(histo.dataSets[0].dataProvider, function(key, item) {
-            item.color = '#22272c';
+            item.color = normal_bar_color;
+            histo.panels[1].stockGraphs[0].showBalloon = false;
           });
         }
         
         histo.validateData();
-        
+              
+      }
+      
+      $('#display_on_chart').change(function(a, b, c) {
+        blockUI('#history_chart');
+        display_on_chart();
+        unblockUI('#history_chart');
       })
 
       $('#time_range_select').change(function() {
         refresh_detail_chart();
       })
+      
+      
     })
