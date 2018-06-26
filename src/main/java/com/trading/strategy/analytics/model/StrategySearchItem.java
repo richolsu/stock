@@ -4,12 +4,14 @@ public interface StrategySearchItem {
 
 	Long getStartMs();
 
-	Double getPercent();
+	Double getImportance();
 
 	Double getVolume();
 
 	Double getHigh();
 
 	Double getLow();
+
+	Long getCount();
 
 }

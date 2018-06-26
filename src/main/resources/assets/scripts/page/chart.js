@@ -32,8 +32,34 @@ var formatTime = function(unixTimestamp) {
   else if (millisecs < 100)
     millisecs = '0' + millisecs;
 
-  return month + "-" + day + "-" + year + " " + hours + ":" + minutes + ":"
+  return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":"
       + seconds + "." + millisecs;
+}
+
+var formatValue = function(value) {
+
+  if (value == undefined || isNaN(value))
+    return '';
+  
+  if (value < 1)
+    value = Number.parseFloat(value).toFixed(6);
+  else if (value < 100)
+    value = Number.parseFloat(value).toFixed(4);
+  else
+    value = Number.parseFloat(value).toFixed(2);
+  return value;
+}
+
+function onChangeExchange(exchangeTarget, symbolTarget) {
+  var exchange =$(exchangeTarget).val();
+  $(symbolTarget).find('option').remove();
+  var key_list=[], select = [];
+  $.each(select_list, function(key, item){
+    if (item.exchange == exchange && $.inArray(item.symbol, key_list) == -1) {
+      key_list.push(item.symbol);
+      $(symbolTarget).append($('<option>').text(item.symbol).attr('value', item.symbol));
+    }
+  })
 }
 
 function createStockChart(tragetDivId) {
@@ -84,7 +110,6 @@ function createStockChart(tragetDivId) {
                    */
                   "title" : "Value",
                   "percentHeight" : 70,
-
                   "stockGraphs" : [ {
                     "type" : "candlestick",
                     "id" : "g1",
@@ -108,16 +133,19 @@ function createStockChart(tragetDivId) {
                   } ],
 
                   "stockLegend" : {
+                    "markerSize" : 0,
+                    "labelText" : "",
+                    "markerType" : "none",
                     "valueTextRegular" : "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]]",
                   // "periodValueTextComparing": "[[percents.value.close]]%"
                   }
                 }, {
                   "title" : "Volume",
-                  "percentHeight" : 30,
-                  "marginTop" : 1,
+                  "percentHeight" : 40,
+                  "marginTop" : 100,
                   "columnWidth" : 0.7,
                   "showCategoryAxis" : true,
-
+                  "marginTop": 200,
                   "stockGraphs" : [ {
                     "valueField" : "volume",
                     "countField" : "count",
@@ -125,7 +153,8 @@ function createStockChart(tragetDivId) {
                     "lineColorField" : "color",
                     "type" : "column",
                     "showBalloon" : false,
-                    "balloonText" : "Count: <b>[[count]]</b>",
+                    "showBalloonAt": "top",
+                    "balloonText" : "#Results: <b>[[count]]</b>",
                     "fillAlphas" : 1,
                     "lineColor" : "#22272c",
                     "fillColors" : "#22272c",
@@ -240,13 +269,13 @@ function createStockChart(tragetDivId) {
                 format : "YYYY"
               }, {
                 period : "MM",
-                format : "MMM, YYYY"
+                format : "YYYY-MM"
               }, {
                 period : "WW",
-                format : "MMM DD, YYYY"
+                format : "YYYY-MM-DD"
               }, {
                 period : "DD",
-                format : "MMM DD, YYYY"
+                format : "YYYY-MM-DD"
               }, {
                 period : "hh",
                 format : "LA"
@@ -327,26 +356,48 @@ var normal_bar_color = '#777777';
   
 jQuery(document).ready(
     function() {
+      
+
+      var key_list=[], select = [];
+      $.each(select_list, function(key, item){
+        if ($.inArray(item.exchange, key_list) == -1) {
+          key_list.push(item.exchange);          
+          $('#history_exchange').append($('<option>').text(item.exchange).attr('value', item.exchange));
+          $('#compare1_exchange').append($('<option>').text(item.exchange).attr('value', item.exchange));
+          $('#compare2_exchange').append($('<option>').text(item.exchange).attr('value', item.exchange));
+        }
+      })
+      
+      $.each(strategy_list, function(key, item){
+        $('#analytics_strategy').append($('<option>').text(item).attr('value', item));
+      })
+      
+
+      onChangeExchange('#history_exchange', '#history_trading_pair');
+      onChangeExchange('#compare1_exchange', '#compare1_trading_pair');
+      onChangeExchange('#compare2_exchange', '#compare2_trading_pair');
+      
       var today = new Date();
       $('#history_to').datepicker("setDate", today);
       $('#history_from').datepicker("setDate",
           new Date(today.setMonth(today.getMonth() - 3)));
 
+
       var oTable = $('#strategy_result').DataTable({
         processing : true,
         serverSide : true,
-        lengthChange : false,
         searching : false,
         ordering : true,
+        scrollY: "200px",
+        scrollCollapse: true,
+        paging: false,
         ajax : {
           url : strategy_page_url,
           type : "POST",
           data : function(data) {
             var filter = {
-              rows_per_page : data.length,
-              page_index : data.start / data.length + 1,
-              order : data.columns[data.order[0].column].data,
-              dir : data.order[0].dir,
+              order: data.columns[data.order[0].column].data,
+              dir:data.order[0].dir,
               strategy : $('#analytics_strategy').val(),
               exchange : $('#history_exchange').val(),
               symbol : $('#history_trading_pair').val(),
@@ -363,33 +414,33 @@ jQuery(document).ready(
             return json.content;
           },
         },
-        pageLength : 5,
-        deferLoading : 2,
         select : true,
         columns : [ {
           data : 'startMs',
           render : function(data, display, record) {
             return formatTime(data);
           },
-          title : 'Time',
-          defaultContent : ''
+          title : 'Time'
         }, {
-          data : 'percent',
-          title : '%',
-          defaultContent : ''
+          data : 'importance',          
+          title : '%'
         }, {
           data : 'volume',
-          title : 'Trading Volume',
-          defaultContent : ''
+          render : formatValue,
+          title : 'Trading Volume'
+        }, {
+          data : 'count',
+          title : 'Count'            
         }, {
           data : 'high',
-          title : 'High Price',
-          defaultContent : ''
+          title : 'High Price'
         }, {
           data : 'low',
-          title : 'Low Price',
-          defaultContent : ''
+          title : 'Low Price'
         } ],
+        columnDefs: [
+          { className: "dt-right", "targets": [1, 2, 3, 4, 5] }
+        ],
         fnDrawCallback : function(oSettings, b, c) {
           $('#strategy_result').DataTable().row(':eq(0)', {
             page : 'current'
@@ -440,6 +491,11 @@ jQuery(document).ready(
             end_date : $('#history_to').val()
           },
           success : function(data, res) {
+            
+            if (data.length == 0) {
+              toastr.warning("There are no data to draw history chart", "Sorry!");
+            }
+            
             $.each(data, function(key, item) {
               item.count = 0;
               item.color = normal_bar_color;
@@ -474,6 +530,9 @@ jQuery(document).ready(
 
       function refresh_detail_chart() {
 
+        if (detail == undefined)
+          return;
+        
         var selectedRowData = oTable.row({
           selected : true
         }).data();
@@ -504,7 +563,7 @@ jQuery(document).ready(
           success : function(data, res) {
 
             if (data.length == 0) {
-              toastr.warning("There are no data to draw chart", "Sorry!");
+              toastr.warning("There are no data to draw detail chart", "Sorry!");
             }
 
             $.each(data, function(key, item) {
@@ -536,12 +595,21 @@ jQuery(document).ready(
 
           },
         });
+        
+        $('#compare1_trading_pair').trigger('change');
+        $('#compare2_trading_pair').trigger('change');
 
       }
 
       function get_strategy_result() {
 
         $.ajax({
+          beforeSend: function(){
+            blockUI();
+          },
+          complete: function(){
+            unblockUI();
+          },
           type : "POST",
           url : strategy_run_url,
           data : {
@@ -554,9 +622,15 @@ jQuery(document).ready(
             end_date : $('#history_to').val()
           },
           success : function(data, res) {
+            if (data.total == 0) {
+              toastr.warning("There are no strategy result", "Sorry!");
+              data.percent = 0;
+              data.volume = 0;
+            }
+            
             $('#result_total').html(data.total);
             $('#result_average_percent').html(data.percent);
-            $('#result_average_volume').html(data.volume);
+            $('#result_average_volume').html(formatValue(data.volume));
           },
         });
 
@@ -594,7 +668,7 @@ jQuery(document).ready(
           success : function(data, res) {
 
             if (data.length == 0) {
-              toastr.warning("There are no data to draw chart", "Sorry!");
+              toastr.warning("There are no data to draw first compare chart", "Sorry!");
             }
 
             $.each(data, function(key, item) {
@@ -660,7 +734,7 @@ jQuery(document).ready(
           success : function(data, res) {
 
             if (data.length == 0) {
-              toastr.warning("There are no data to draw chart", "Sorry!");
+              toastr.warning("There are no data to draw second compare chart", "Sorry!");
             }
 
             $.each(data, function(key, item) {
@@ -727,11 +801,20 @@ jQuery(document).ready(
 
       $('#history_exchange, #history_trading_pair, #history_granularity')
           .change(function() {
+            
+            if ($(this).attr("id") == 'history_exchange') {
+              onChangeExchange('#history_exchange', '#history_trading_pair');
+            }              
+
             refresh_history_chart();
           })
 
       $('#compare1_exchange, #compare1_trading_pair').change(function() {
-
+        
+        if ($(this).attr("id") == 'compare1_exchange') {
+          onChangeExchange('#compare1_exchange', '#compare1_trading_pair');
+        }
+        
         if ($('#compare1_exchange').val() != 0
             && $('#compare1_trading_pair').val() != 0) {
           $('#compare_chart_1').removeClass('hidden');
@@ -744,6 +827,11 @@ jQuery(document).ready(
       })
 
       $('#compare2_exchange, #compare2_trading_pair').change(function() {
+        
+        if ($(this).attr("id") == 'compare2_exchange') {
+          onChangeExchange('#compare2_exchange', '#compare2_trading_pair');
+        }
+        
         if ($('#compare2_exchange').val() != 0
             && $('#compare2_trading_pair').val() != 0) {
           $('#compare_chart_2').removeClass('hidden');
@@ -762,7 +850,7 @@ jQuery(document).ready(
           $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
             var group_cnt = 0;
             $.each(strategy_result, function(key, stg_value) {
-              if (hist_value.date <= stg_value && stg_value <= hist_value.date + dt) {
+              if (hist_value.date <= stg_value && stg_value < hist_value.date + dt) {
                 group_cnt++;
               }
             })

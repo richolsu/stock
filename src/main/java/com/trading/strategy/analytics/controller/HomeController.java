@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,23 +38,23 @@ public class HomeController {
 	private StrategyRepository strategyRepository;
 
 	@GetMapping("/")
-	public String index() {
+	public String index(Model model) {
+		model.addAttribute("select_list", ohlcRepository.findAllExchangeSymbol());
+		model.addAttribute("strategy_list", strategyRepository.findAllStrategyName());
 		return "index";
 	}
 
 	@RequestMapping(value = "/history_data", produces = "application/json")
 	public @ResponseBody List<HistoryResult> historyData(@RequestParam Map<String, String> requestParams) {
 
-		String strategy = requestParams.get("strategy");
 		String exchange = requestParams.get("exchange");
 		String symbol = requestParams.get("symbol");
 		String granularityInMs = requestParams.get("granularityInMs");
-		String threshold = requestParams.get("threshold");
-		String groupSize = requestParams.get("group_size");
+
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
@@ -65,8 +66,6 @@ public class HomeController {
 		}
 
 		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
-		Long groupSizeMs = Long.parseLong(groupSize);
-		Double importance = Double.parseDouble(threshold);
 
 		List<HistoryResult> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 
@@ -76,20 +75,16 @@ public class HomeController {
 	@RequestMapping(value = "/detail_data", produces = "application/json")
 	public @ResponseBody List<HistoryResult> detailData(@RequestParam Map<String, String> requestParams) {
 
-		String strategy = requestParams.get("strategy");
 		String exchange = requestParams.get("exchange");
 		String symbol = requestParams.get("symbol");
 		String granularityInMs = requestParams.get("granularityInMs");
-		String threshold = requestParams.get("threshold");
+
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
-		String groupSize = requestParams.get("group_size");
 
 		Long startMs = Long.parseLong(startDate);
 		Long endMs = Long.parseLong(endDate);
 		Long granularityMs = Long.parseLong(granularityInMs);
-		Double importance = Double.parseDouble(threshold);
-		Long groupSizeMs = Long.parseLong(groupSize);
 
 		List<HistoryResult> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 
@@ -107,7 +102,7 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
@@ -119,7 +114,7 @@ public class HomeController {
 		}
 
 		Long granularityMs = Long.parseLong(granularityInMs);
-		Double importance = Double.parseDouble(threshold);
+		Double importance = Double.parseDouble(threshold) / 100;
 
 		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
 				+ " " + endMs);
@@ -139,8 +134,10 @@ public class HomeController {
 		String threshold = requestParams.get("threshold");
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
+		String order = requestParams.getOrDefault("order", "name");
+		String dir = requestParams.getOrDefault("dir", "asc");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
@@ -152,19 +149,14 @@ public class HomeController {
 		}
 
 		Long granularityMs = Long.parseLong(granularityInMs);
-		Double importance = Double.parseDouble(threshold);
+		Double importance = Double.parseDouble(threshold) / 100;
 
-		int rows_per_page = Integer.parseInt(requestParams.getOrDefault("rows_per_page", "3"));
-		int page_index = Integer.parseInt(requestParams.getOrDefault("page_index", "1"));
-		String order = requestParams.getOrDefault("order", "name");
-		String dir = requestParams.getOrDefault("dir", "asc");
+		if (order.equals("importance"))
+			order = "b.importance";
 
-		page_index--;
-		PageRequest request = PageRequest.of(page_index, rows_per_page,
-				dir.equals("asc") ? Direction.ASC : Direction.DESC, order);
+		PageRequest request = PageRequest.of(0, Integer.MAX_VALUE, dir.equals("asc") ? Direction.ASC : Direction.DESC,
+				order);
 
-		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
-				+ " " + endMs);
 		Page<StrategySearchItem> result = strategyRepository.findAllForStrategy(strategy, exchange, symbol,
 				granularityMs, importance, startMs, endMs, request);
 
@@ -182,7 +174,7 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
@@ -194,7 +186,7 @@ public class HomeController {
 		}
 
 		Long granularityMs = Long.parseLong(granularityInMs);
-		Double importance = Double.parseDouble(threshold);
+		Double importance = Double.parseDouble(threshold) / 100;
 
 		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
 				+ " " + endMs);

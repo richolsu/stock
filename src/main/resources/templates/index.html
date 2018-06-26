@@ -2,14 +2,26 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 <head>
 <style>
-.form-group.form-md-line-input {
-    margin: 5px 0 15px;
-}
+
 table.dataTable td.sorting_1, table.dataTable td.sorting_2, table.dataTable td.sorting_3, table.dataTable th.sorting_1, table.dataTable th.sorting_2, table.dataTable th.sorting_3 {
     background: inherit!important
 }
 table.dataTable tbody tr.selected {
     background-color: #F4D03F!important
+}
+.portlet.light>.portlet-title>.actions {
+    padding: 0px;
+}
+.portlet {
+    margin-bottom: 5px;
+}
+.portlet.light {
+    padding: 5px 10px 5px;
+    background-color: #fff;
+}
+.form-group.form-md-line-input {
+    margin: 0 20px 5px;
+    padding-top: 5px;
 }
 </style>
 </head>
@@ -27,20 +39,14 @@ table.dataTable tbody tr.selected {
                         <div class="actions form-inline">
                             <div class="form-group form-md-line-input has-info">
                                 <select class="form-control" id="history_exchange">
-                                    <option value="gdax" selected>Kraken</option>
-                                    <option value="gdax">Binance</option>
-                                    <option value="gdax">Gemini</option>
                                 </select>
                             </div>
                             <div class="form-group form-md-line-input has-info">
                                 <select class="form-control" id="history_trading_pair">
-                                  <option value="BTC-USD" selected>BTC-USD</option>
-                                  <option value="ETH-BTC">ETH-BTC</option>
-                                  <option value="ETH-USD">ETH-USD</option>
                                 </select>
                             </div>
                             <div class="form-group form-md-line-input has-info">
-                                <div class="input-group input-medium date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                                <div class="input-group input-medium date-picker input-daterange" data-date-format="yyyy-mm-dd">
                                     <input type="text" class="form-control" id="history_from" name="from" placeholder="From">
                                     <span class="input-group-addon"> - </span>
                                     <input type="text" class="form-control" id="history_to" name="to" placeholder="To"> 
@@ -58,7 +64,7 @@ table.dataTable tbody tr.selected {
                         </div>
                     </div>
                     <div class="portlet-body">    
-                        <div id="history_chart" class="chart " style="height: 500px;"> </div>                    
+                        <div id="history_chart" class="chart " style="height: 450px;"> </div>                    
                     </div>
                 </div>
                 <div class="portlet light ">
@@ -68,20 +74,20 @@ table.dataTable tbody tr.selected {
                             <span class="caption-subject font-green-steel uppercase bold">Strategy Analysis</span>
                             <span class="caption-helper hide">weekly stats...</span>
                         </div>
-                        <div class="actions form-inline">
+                        <div class="form-inline">
                             <div class="form-group form-md-line-input has-info margin-right-10">
                                 <select class="form-control" id="analytics_strategy">
-                                    <option value="needle">Strategy1</option>
-                                    <option value="needle">Strategy2</option>
-                                    <option value="needle">Strategy3</option>
                                 </select>
                             </div>
 
                             <div class="form-group  has-info margin-right-10">
-                                <label>Threshold %:</label>
+                                <label>Threshold:</label>
                             </div>
-                            <div class="form-group form-md-line-input has-info margin-right-10">
-                                <input type="text" class="form-control" id="analytics_threshold" value="0.005" style="width:50px">
+                            <div class="form-group form-md-line-input has-info">
+                                <input type="number" class="form-control" id="analytics_threshold" value="0.5" style="width:50px">
+                            </div>
+                            <div class="form-group  has-info margin-right-10">
+                                <label>%</label>
                             </div>
                             <div class="form-group  has-info margin-right-10">
                                 <label>Grouping Size(ms):</label>
@@ -100,12 +106,12 @@ table.dataTable tbody tr.selected {
                     </div>
                     <div id="strategy_body" class="portlet-body hidden">  
                         <div class="row">
-                            <div class="col-md-4">
-                                <div class="well">
-                                    <ul class="list-unstyled">
-                                        <li > Total points: <span id="result_total"></span></li>
-                                        <li> Average %: <span id="result_average_percent"></span></li>
-                                        <li> Average Trading Volume: <span id="result_average_volume"></span> </li>
+                            <div class="col-md-8">
+                                <div class="">
+                                    <ul class="list-inline">
+                                        <li > <strong>Total points: </strong><span id="result_total"></span></li>
+                                        <li> <strong>Average %: </strong><span id="result_average_percent"></span></li>
+                                        <li> <strong>Average Trading Volume: </strong><span id="result_average_volume"></span> </li>
                                     </ul>
                                 </div>
                             </div>
@@ -117,7 +123,7 @@ table.dataTable tbody tr.selected {
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered nowrap table-striped" id="strategy_result">
+                                <table class="table table-bordered nowrap table-striped compact" id="strategy_result">
                                 </table>
                             </div>
                         </div>
@@ -135,16 +141,8 @@ table.dataTable tbody tr.selected {
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
                             <select class="form-control" id="compare1_exchange">
-                                <option value="0">Select Exchange</option>
-                                <option value="gdax">Kraken</option>
-                                <option value="gdax">Binance</option>
-                                <option value="gdax">Gemini</option>
                             </select>
                             <select class="form-control" id="compare1_trading_pair">
-                                <option value="0">Select Pair</option>
-                                <option value="BTC-USD">BTC-USD</option>
-                                <option value="ETH-BTC">ETH-BTC</option>
-                                <option value="ETH-USD">ETH-USD</option>
                             </select>
                         </div>
                         <div id="compare_chart_1" class="chart hidden" style="height: 400px;"> </div>
@@ -152,16 +150,8 @@ table.dataTable tbody tr.selected {
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
                             <select class="form-control" id="compare2_exchange">
-                                <option value="0">Select Exchange</option>
-                                <option value="gdax">Kraken</option>
-                                <option value="gdax">Binance</option>
-                                <option value="gdax">Gemini</option>
                             </select>
                             <select class="form-control" id="compare2_trading_pair">
-                                <option value="0">Select Pair</option>
-                                <option value="BTC-USD">BTC-USD</option>
-                                <option value="ETH-BTC">ETH-BTC</option>
-                                <option value="ETH-USD">ETH-USD</option>
                             </select>
                         </div>
                         <div id="compare_chart_2" class="chart hidden" style="height: 400px;"> </div>
@@ -179,6 +169,8 @@ var strategy_run_url = /*[[@{/strategy/run}]]*/'';
 var detail_url = /*[[@{/detail_data}]]*/'';
 var strategy_page_url = /*[[@{/strategy/page}]]*/'';
 var strategy_all_url = /*[[@{/strategy/all}]]*/'';
+var select_list = /*[[${select_list}]]*/'';
+var strategy_list = /*[[${strategy_list}]]*/'';
 </script>
 <script th:src="@{/assets/scripts/page/chart.js}" type="text/javascript"></script>
 
