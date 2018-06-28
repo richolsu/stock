@@ -31,6 +31,6 @@ public interface OhlcRepository extends JpaRepository<Ohlc, Long> {
 			@Param("granularityInMs") Long granularityInMs, @Param("importance") Double importance,
 			@Param("startMs") Long startMs, @Param("endMs") Long endMs);
 
-	@Query(value = "SELECT DISTINCT exchange, symbol FROM OHLC", nativeQuery = true)
+	@Query(value = "SELECT DISTINCT exchange, symbol, granularityInMs  FROM OHLC", nativeQuery = true)
 	public List<ExchangeSymbolItem> findAllExchangeSymbol();
 }

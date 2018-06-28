@@ -381,6 +381,9 @@ jQuery(document).ready(
       $('#history_to').datepicker("setDate", today);
       $('#history_from').datepicker("setDate",
           new Date(today.setMonth(today.getMonth() - 3)));
+      $('#history_from, #history_to').change(function() {
+        refresh_history_chart();
+      });            
 
 
       var oTable = $('#strategy_result').DataTable({
@@ -441,6 +444,7 @@ jQuery(document).ready(
         columnDefs: [
           { className: "dt-right", "targets": [1, 2, 3, 4, 5] }
         ],
+        order: [  [ 0, "desc" ] ],
         fnDrawCallback : function(oSettings, b, c) {
           $('#strategy_result').DataTable().row(':eq(0)', {
             page : 'current'
@@ -494,6 +498,9 @@ jQuery(document).ready(
             
             if (data.length == 0) {
               toastr.warning("There are no data to draw history chart", "Sorry!");
+              data = {
+                dummyValue: 0
+              };
             }
             
             $.each(data, function(key, item) {
@@ -521,7 +528,8 @@ jQuery(document).ready(
             }
 
             histo.dataSets[0].dataProvider = data;
-            histo.validateData();
+            
+            histo.validateNow();
 
           },
         });
@@ -591,7 +599,7 @@ jQuery(document).ready(
             }
 
             detail.dataSets[0].dataProvider = data;
-            detail.validateData();
+            detail.validateNow();
 
           },
         });
@@ -696,7 +704,7 @@ jQuery(document).ready(
             }
 
             compare1.dataSets[0].dataProvider = data;
-            compare1.validateData();
+            compare1.validateNow();
           },
         });
 
@@ -762,7 +770,7 @@ jQuery(document).ready(
             }
 
             compare2.dataSets[0].dataProvider = data;
-            compare2.validateData();
+            compare2.validateNow();
 
           },
         });
@@ -873,7 +881,7 @@ jQuery(document).ready(
           });
         }
         
-        histo.validateData();
+        histo.validateNow();
               
       }
       

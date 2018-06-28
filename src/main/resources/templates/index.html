@@ -64,7 +64,7 @@ table.dataTable tbody tr.selected {
                         </div>
                     </div>
                     <div class="portlet-body">    
-                        <div id="history_chart" class="chart " style="height: 450px;"> </div>                    
+                        <div id="history_chart" class="chart " style="height: 400px;"> </div>                    
                     </div>
                 </div>
                 <div class="portlet light ">
@@ -84,7 +84,7 @@ table.dataTable tbody tr.selected {
                                 <label>Threshold:</label>
                             </div>
                             <div class="form-group form-md-line-input has-info">
-                                <input type="number" class="form-control" id="analytics_threshold" value="0.5" style="width:50px">
+                                <input type="number" class="form-control" id="analytics_threshold" value="0.5" min="0" step="0.01" style="width:50px">
                             </div>
                             <div class="form-group  has-info margin-right-10">
                                 <label>%</label>
@@ -136,7 +136,7 @@ table.dataTable tbody tr.selected {
                                 <option value="6000">6 minutes</option>
                             </select>
                         </div>
-                        <div id="detail_chart" class="chart" style="height: 400px;"> </div>
+                        <div id="detail_chart" class="chart" style="height: 350px;"> </div>
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
@@ -145,7 +145,7 @@ table.dataTable tbody tr.selected {
                             <select class="form-control" id="compare1_trading_pair">
                             </select>
                         </div>
-                        <div id="compare_chart_1" class="chart hidden" style="height: 400px;"> </div>
+                        <div id="compare_chart_1" class="chart hidden" style="height: 350px;"> </div>
                         
                         <div class="form-group form-md-line-input form-inline">
                             <label>Compare with:</label>
@@ -154,7 +154,7 @@ table.dataTable tbody tr.selected {
                             <select class="form-control" id="compare2_trading_pair">
                             </select>
                         </div>
-                        <div id="compare_chart_2" class="chart hidden" style="height: 400px;"> </div>
+                        <div id="compare_chart_2" class="chart hidden" style="height: 350px;"> </div>
                     </div>
                 </div>
             </div>
