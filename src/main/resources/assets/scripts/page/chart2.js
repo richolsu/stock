@@ -161,7 +161,7 @@ function createStockChart(tragetDivId) {
                     "fillColors" : "#22272c",
                   } ],
                   "stockLegend" : {                    
-                    "enabled" : true,
+                    "enabled" : false,
                     "markerType" : "none",
                     "markerSize" : 0,
                     "labelText" : "",

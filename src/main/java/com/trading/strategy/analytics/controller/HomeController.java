@@ -44,6 +44,20 @@ public class HomeController {
 		return "index";
 	}
 
+	@GetMapping("/test1")
+	public String index2(Model model) {
+		model.addAttribute("select_list", ohlcRepository.findAllExchangeSymbol());
+		model.addAttribute("strategy_list", strategyRepository.findAllStrategyName());
+		return "index2";
+	}
+
+	@GetMapping("/test2")
+	public String index3(Model model) {
+		model.addAttribute("select_list", ohlcRepository.findAllExchangeSymbol());
+		model.addAttribute("strategy_list", strategyRepository.findAllStrategyName());
+		return "index3";
+	}
+
 	@RequestMapping(value = "/history_data", produces = "application/json")
 	public @ResponseBody List<HistoryResult> historyData(@RequestParam Map<String, String> requestParams) {
 
