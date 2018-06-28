@@ -161,7 +161,7 @@ function createStockChart(tragetDivId) {
                     "fillColors" : "#22272c",
                   } ],
                   "stockLegend" : {                    
-                    "enabled" : false,
+                    "enabled" : true,
                     "markerType" : "none",
                     "markerSize" : 0,
                     "labelText" : "",
@@ -480,6 +480,36 @@ jQuery(document).ready(
         App.unblockUI(targetId);
       }
       
+      
+      function check_data(data, startMs, endMs, chart_name) {
+        if (data.length == 0) {
+          toastr.warning("There are no data to draw " + chart_name + " chart", "Sorry!");
+        }else{
+          var open=0, high=0, low=0, close=0;
+          $.each(data, function(key, item){
+            open += item.open;
+            high += item.high;
+            low += item.low;
+            close += item.close;
+          });
+          
+          open = open/data.length;
+          high = high/data.length;
+          low = low/data.length;
+          close = close/data.length;
+          
+          if (data[0].date>startMs) {
+            data = [{date:startMs, open:open, high:high, low:low, close:close}, ...data];
+          }
+          if (data[data.length-1].date<endMs) {
+            data.push({date:endMs});
+          }
+        }
+        
+        return data;
+      }
+      
+      
       function refresh_history_chart() {
         
         $('#display_on_chart').prop('checked', false);
@@ -503,14 +533,6 @@ jQuery(document).ready(
             end_date : $('#history_to').val()
           },
           success : function(data, res) {
-            
-            if (data.length == 0) {
-              toastr.warning("There are no data to draw history chart", "Sorry!");
-              data = {
-                dummyValue: 0
-              };
-            }
-            
             $.each(data, function(key, item) {
               item.count = 0;
               item.color = normal_bar_color;
@@ -578,10 +600,8 @@ jQuery(document).ready(
             end_date : endMs
           },
           success : function(data, res) {
-
-            if (data.length == 0) {
-              toastr.warning("There are no data to draw detail chart", "Sorry!");
-            }
+            
+            data = check_data(data, startMs, endMs, 'detail');
 
             $.each(data, function(key, item) {
               item.count = 0;
@@ -685,9 +705,7 @@ jQuery(document).ready(
           },
           success : function(data, res) {
 
-            if (data.length == 0) {
-              toastr.warning("There are no data to draw first compare chart", "Sorry!");
-            }
+            data = check_data(data, startMs, endMs, 'first compare');
 
             $.each(data, function(key, item) {
               item.count = 0;
@@ -752,9 +770,7 @@ jQuery(document).ready(
           },
           success : function(data, res) {
 
-            if (data.length == 0) {
-              toastr.warning("There are no data to draw second compare chart", "Sorry!");
-            }
+            data = check_data(data, startMs, endMs, 'second compare');
 
             $.each(data, function(key, item) {
               item.count = 0;

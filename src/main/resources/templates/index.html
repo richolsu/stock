@@ -19,9 +19,8 @@ table.dataTable tbody tr.selected {
     padding: 5px 10px 5px;
     background-color: #fff;
 }
-.form-group.form-md-line-input {
-    margin: 0 20px 5px;
-    padding-top: 5px;
+.compare-box {
+    margin: 5px -1px 0;
 }
 #detail_chart .amChartsButton, #detail_chart .amChartsButtonSelected,
 #compare_chart_1 .amChartsButton, #compare_chart_1 .amChartsButtonSelected,
@@ -31,7 +30,7 @@ table.dataTable tbody tr.selected {
 }
 
 .amcharts-stock-panel-div-stockPanel1{
-    margin-top:-5px !important;
+    margin-top:-12px !important;
 }
 </style>
 </head>
@@ -137,34 +136,57 @@ table.dataTable tbody tr.selected {
                                 </table>
                             </div>
                         </div>
-                        <div class="form-group form-md-line-input form-inline">
-                            <label>Time range:</label>
-                            <select class="form-control" id="time_range_select">
-                                <option value="100">6 seconds</option>
-                                <option value="1000" selected>1 minute</option>
-                                <option value="3000">3 minutes</option>
-                                <option value="6000">6 minutes</option>
-                            </select>
+                        <div class="row bg-grey-steel bg-font-grey-steel compare-box">
+                            <div class="col-md-1">
+                                <div class="form-group form-md-line-input form-inline">
+                                    <label>Time range:</label>
+                                    <select class="form-control" id="time_range_select">
+                                        <option value="100">6 seconds</option>
+                                        <option value="1000" selected>1 minute</option>
+                                        <option value="3000">3 minutes</option>
+                                        <option value="6000">6 minutes</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-11">
+                                <div id="detail_chart" class="chart" style="height: 250px;"> </div>
+                            </div>
+                            
                         </div>
-                        <div id="detail_chart" class="chart" style="height: 250px;"> </div>
-                        
-                        <div class="form-group form-md-line-input form-inline">
-                            <label>Compare with:</label>
-                            <select class="form-control" id="compare1_exchange">
-                            </select>
-                            <select class="form-control" id="compare1_trading_pair">
-                            </select>
+
+                        <div class="row bg-grey-steel bg-font-grey-steel compare-box">
+                            <div class="col-md-1">
+                                <div class="form-group form-md-line-input form-inline">
+                                    <label>Compare with:</label>
+                                    <select class="form-control" id="compare1_exchange">
+                                    </select>
+                                    <select class="form-control" id="compare1_trading_pair">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-11">
+                                <div id="compare_chart_1" class="chart hidden" style="height: 250px;"> </div>
+                            </div>
+                            
                         </div>
-                        <div id="compare_chart_1" class="chart hidden" style="height: 250px;"> </div>
-                        
-                        <div class="form-group form-md-line-input form-inline">
-                            <label>Compare with:</label>
-                            <select class="form-control" id="compare2_exchange">
-                            </select>
-                            <select class="form-control" id="compare2_trading_pair">
-                            </select>
+                        <div class="row bg-grey-steel bg-font-grey-steel compare-box">
+                            <div class="col-md-1">
+                              <div class="form-group form-md-line-input form-inline">
+                                  <label>Compare with:</label>
+                                  <select class="form-control" id="compare2_exchange">
+                                  </select>
+                                  <select class="form-control" id="compare2_trading_pair">
+                                  </select>
+                              </div>
+                            </div>
+
+                            <div class="col-md-11">
+                              <div id="compare_chart_2" class="chart hidden" style="height: 250px;"> </div>
+                            </div>
+                            
                         </div>
-                        <div id="compare_chart_2" class="chart hidden" style="height: 250px;"> </div>
                     </div>
                 </div>
             </div>

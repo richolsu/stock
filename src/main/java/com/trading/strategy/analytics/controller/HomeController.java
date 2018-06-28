@@ -48,14 +48,14 @@ public class HomeController {
 	public String index2(Model model) {
 		model.addAttribute("select_list", ohlcRepository.findAllExchangeSymbol());
 		model.addAttribute("strategy_list", strategyRepository.findAllStrategyName());
-		return "index2";
+		return "index1";
 	}
 
 	@GetMapping("/test2")
 	public String index3(Model model) {
 		model.addAttribute("select_list", ohlcRepository.findAllExchangeSymbol());
 		model.addAttribute("strategy_list", strategyRepository.findAllStrategyName());
-		return "index3";
+		return "index2";
 	}
 
 	@RequestMapping(value = "/history_data", produces = "application/json")
