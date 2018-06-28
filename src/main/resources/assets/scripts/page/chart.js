@@ -182,6 +182,7 @@ function createStockChart(tragetDivId) {
             },
 
             "chartScrollbarSettings" : {
+              "enabled": false,
               "graph" : "g1",
               "graphType" : "line",
               "usePeriod" : "DD",
@@ -335,16 +336,16 @@ function createStockChart(tragetDivId) {
             "listeners": [{
               "event": "dataUpdated",
               "method": function(e) {
-                for (var x in e.chart.periodSelector.periods) {
-                  var period = e.chart.periodSelector.periods[x];
-                  if ('MAX' == period.period) {
-                    period.selected = true;
-                  } else {
-                    period.selected = false;
-                  }
-                }
-
-                e.chart.periodSelector.setDefaultPeriod();
+//                for (var x in e.chart.periodSelector.periods) {
+//                  var period = e.chart.periodSelector.periods[x];
+//                  if ('MAX' == period.period) {
+//                    period.selected = true;
+//                  } else {
+//                    period.selected = false;
+//                  }
+//                }
+//
+//                e.chart.periodSelector.setDefaultPeriod();
               }
             }]
           });
@@ -809,8 +810,12 @@ jQuery(document).ready(
       
       $('#run_strategy').click(function() {
         $('#strategy_body').removeClass('hidden');
-        if (detail == undefined)
+        if (detail == undefined) {
           detail = createStockChart('detail_chart');
+          delete detail.periodSelector;
+        }
+          
+        
 
         get_strategy_result();
         update_strategy_all_result();
@@ -837,8 +842,11 @@ jQuery(document).ready(
         if ($('#compare1_exchange').val() != 0
             && $('#compare1_trading_pair').val() != 0) {
           $('#compare_chart_1').removeClass('hidden');
-          if (compare1 == undefined)
+          if (compare1 == undefined) {
             compare1 = createStockChart('compare_chart_1');
+            delete compare1.periodSelector;
+          }
+            
           refresh_compare1_chart();
         } else {
           $('#compare_chart_1').addClass('hidden');
@@ -854,8 +862,11 @@ jQuery(document).ready(
         if ($('#compare2_exchange').val() != 0
             && $('#compare2_trading_pair').val() != 0) {
           $('#compare_chart_2').removeClass('hidden');
-          if (compare2 == undefined)
+          if (compare2 == undefined) {
             compare2 = createStockChart('compare_chart_2');
+            delete compare2.periodSelector;
+          }
+            
           refresh_compare2_chart();
         } else {
           $('#compare_chart_2').addClass('hidden');
