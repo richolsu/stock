@@ -47,6 +47,7 @@ var formatValue = function(value) {
     value = Number.parseFloat(value).toFixed(4);
   else
     value = Number.parseFloat(value).toFixed(2);
+  
   return value;
 }
 
@@ -142,7 +143,7 @@ function createStockChart(tragetDivId) {
                 }, {
                   "title" : "Volume",
                   "percentHeight" : 40,
-                  "marginTop" : 100,
+                  "marginTop" : 0,
                   "columnWidth" : 0.7,
                   "showCategoryAxis" : true,
                   "marginTop": 200,
@@ -159,7 +160,8 @@ function createStockChart(tragetDivId) {
                     "lineColor" : "#22272c",
                     "fillColors" : "#22272c",
                   } ],
-                  "stockLegend" : {
+                  "stockLegend" : {                    
+                    "enabled" : false,
                     "markerType" : "none",
                     "markerSize" : 0,
                     "labelText" : "",
@@ -425,7 +427,10 @@ jQuery(document).ready(
           },
           title : 'Time'
         }, {
-          data : 'importance',          
+          data : 'importance', 
+          render: function(data) {
+            return Number.parseFloat(data).toFixed(2);
+          },
           title : '%'
         }, {
           data : 'volume',
@@ -436,10 +441,12 @@ jQuery(document).ready(
           title : 'Count'            
         }, {
           data : 'high',
+          render : formatValue,
           title : 'High Price'
         }, {
           data : 'low',
-          title : 'Low Price'
+          title : 'Low Price',
+          render : formatValue,
         } ],
         columnDefs: [
           { className: "dt-right", "targets": [1, 2, 3, 4, 5] }
