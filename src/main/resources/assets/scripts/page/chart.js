@@ -529,6 +529,7 @@ jQuery(document).ready(
 
             histo.dataSets[0].dataProvider = data;
             
+            histo.validateData();
             histo.validateNow();
 
           },
@@ -599,6 +600,7 @@ jQuery(document).ready(
             }
 
             detail.dataSets[0].dataProvider = data;
+            detail.validateData();
             detail.validateNow();
 
           },
@@ -704,6 +706,7 @@ jQuery(document).ready(
             }
 
             compare1.dataSets[0].dataProvider = data;
+            compare1.validateData();
             compare1.validateNow();
           },
         });
@@ -770,6 +773,7 @@ jQuery(document).ready(
             }
 
             compare2.dataSets[0].dataProvider = data;
+            compare2.validateData();
             compare2.validateNow();
 
           },
@@ -881,6 +885,7 @@ jQuery(document).ready(
           });
         }
         
+        histo.validateData();
         histo.validateNow();
               
       }
