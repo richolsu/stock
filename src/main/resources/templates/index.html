@@ -84,7 +84,7 @@ table.dataTable tbody tr.selected {
                             <span class="caption-helper hide">weekly stats...</span>
                         </div>
                         <div class="form-inline">
-                            <div class="form-group form-md-line-input has-info margin-right-10">
+                            <div class="form-group form-md-line-input has-info margin-right-10" style="margin-left:10px;">
                                 <select class="form-control" id="analytics_strategy">
                                 </select>
                             </div>
@@ -115,18 +115,14 @@ table.dataTable tbody tr.selected {
                     </div>
                     <div id="strategy_body" class="portlet-body hidden">  
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="">
                                     <ul class="list-inline">
                                         <li > <strong>Total points: </strong><span id="result_total"></span></li>
                                         <li> <strong>Average %: </strong><span id="result_average_percent"></span></li>
                                         <li> <strong>Average Trading Volume: </strong><span id="result_average_volume"></span> </li>
+                                        <li> <label class="mt-checkbox">Display results on chart <input type="checkbox" id="display_on_chart"><span></span></label> </li>
                                     </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="md-checkbox">                                    
-                                    <label class="mt-checkbox">Display results on chart <input type="checkbox" id="display_on_chart"><span></span></label>
                                 </div>
                             </div>
                         </div>
@@ -136,16 +132,20 @@ table.dataTable tbody tr.selected {
                                 </table>
                             </div>
                         </div>
+                        <div class="form-group form-md-line-input form-inline" style="margin:0 0 0;padding-top:0px">
+                            <label>Time range:</label>
+                            <select class="form-control" id="time_range_select">
+                                <option value="100">6 seconds</option>
+                                <option value="1000" selected>1 minute</option>
+                                <option value="3000">3 minutes</option>
+                                <option value="6000">6 minutes</option>
+                            </select>
+                        </div>
                         <div class="row bg-grey-steel bg-font-grey-steel compare-box">
                             <div class="col-md-1">
                                 <div class="form-group form-md-line-input form-inline">
-                                    <label>Time range:</label>
-                                    <select class="form-control" id="time_range_select">
-                                        <option value="100">6 seconds</option>
-                                        <option value="1000" selected>1 minute</option>
-                                        <option value="3000">3 minutes</option>
-                                        <option value="6000">6 minutes</option>
-                                    </select>
+                                    <label id="detail_exchange">gdax</label>
+                                    <label id="detail_trading_pair">USD-BTC</label>
                                 </div>
                             </div>
 

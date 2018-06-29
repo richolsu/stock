@@ -14,4 +14,8 @@ public interface StrategySearchItem {
 
 	Long getCount();
 
+	Double getOpen();
+
+	Double getClose();
+
 }

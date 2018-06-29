@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +75,7 @@ public class HomeController {
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
 			startMs = dateFormat.parse(startDate).getTime();
-			endMs = dateFormat.parse(endDate).getTime();
+			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,7 +123,7 @@ public class HomeController {
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
 			startMs = dateFormat.parse(startDate).getTime();
-			endMs = dateFormat.parse(endDate).getTime();
+			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,9 +156,10 @@ public class HomeController {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
+
 		try {
 			startMs = dateFormat.parse(startDate).getTime();
-			endMs = dateFormat.parse(endDate).getTime();
+			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -193,7 +196,7 @@ public class HomeController {
 		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
 		try {
 			startMs = dateFormat.parse(startDate).getTime();
-			endMs = dateFormat.parse(endDate).getTime();
+			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -208,5 +211,12 @@ public class HomeController {
 				importance, startMs, endMs);
 
 		return result;
+	}
+
+	private Date getNextDate(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.DATE, 1); // number of days to add
+		return c.getTime();
 	}
 }

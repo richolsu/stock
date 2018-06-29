@@ -2,8 +2,8 @@ var formatTime = function(unixTimestamp) {
   var dt = new Date(unixTimestamp);
 
   var year = dt.getFullYear();
-  var month = dt.getMonth();
-  var day = dt.getDate() + 1;
+  var month = dt.getMonth() + 1;
+  var day = dt.getDate();
   var hours = dt.getHours();
   var minutes = dt.getMinutes();
   var seconds = dt.getSeconds();
@@ -61,6 +61,12 @@ function onChangeExchange(exchangeTarget, symbolTarget) {
       $(symbolTarget).append($('<option>').text(item.symbol).attr('value', item.symbol));
     }
   })
+  
+
+}
+
+function formatUTCTime(time) {
+  return formatTime(time + new Date().getTimezoneOffset()*60*1000);  
 }
 
 function createStockChart(tragetDivId) {
@@ -109,7 +115,7 @@ function createStockChart(tragetDivId) {
                    * "valueAxis" : { "dashLength" : 5, "maxiumum" : 80 },
                    * "categoryAxis" : { "dashLength" : 1 },
                    */
-                  "title" : "Value",
+                  "title" : "",
                   "percentHeight" : 70,
                   "stockGraphs" : [ {
                     "type" : "candlestick",
@@ -423,10 +429,12 @@ jQuery(document).ready(
         select : true,
         columns : [ {
           data : 'startMs',
-          render : function(data, display, record) {
-            return formatTime(data);
-          },
+          render : formatTime,
           title : 'Time'
+        }, {
+          data : 'startMs',
+          render : formatUTCTime,
+          title : 'Time(UTC)'
         }, {
           data : 'importance', 
           render: function(data) {
@@ -435,11 +443,14 @@ jQuery(document).ready(
           title : '%'
         }, {
           data : 'volume',
-          render : formatValue,
+          render : function(data){
+            return Number.parseFloat(data).toFixed(4);
+          },
           title : 'Trading Volume'
         }, {
-          data : 'count',
-          title : 'Count'            
+          data : 'open',
+          render : formatValue,
+          title : 'Open Price'            
         }, {
           data : 'high',
           render : formatValue,
@@ -448,9 +459,16 @@ jQuery(document).ready(
           data : 'low',
           title : 'Low Price',
           render : formatValue,
+        }, {
+          data : 'close',
+          title : 'Close Price',
+          render : formatValue,
+        }, {
+          data : 'startMs',
+          title : 'Start Time in MS'
         } ],
         columnDefs: [
-          { className: "dt-right", "targets": [1, 2, 3, 4, 5] }
+          { className: "dt-right", "targets": [2, 3, 4, 5, 6, 7, 8] }
         ],
         order: [  [ 0, "desc" ] ],
         fnDrawCallback : function(oSettings, b, c) {
@@ -838,9 +856,15 @@ jQuery(document).ready(
         
         oTable.draw();
       })
+      
+      $('#detail_exchange').text($("#history_exchange option:selected").text());
+      $('#detail_trading_pair').text($("#history_trading_pair option:selected").text());
 
       $('#history_exchange, #history_trading_pair, #history_granularity')
           .change(function() {
+            
+            $('#detail_exchange').text($("#history_exchange option:selected").text());
+            $('#detail_trading_pair').text($("#history_trading_pair option:selected").text());
             
             if ($(this).attr("id") == 'history_exchange') {
               onChangeExchange('#history_exchange', '#history_trading_pair');
