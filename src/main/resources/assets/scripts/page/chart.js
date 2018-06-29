@@ -69,292 +69,306 @@ function formatUTCTime(time) {
   return formatTime(time + new Date().getTimezoneOffset()*60*1000);  
 }
 
-function createStockChart(tragetDivId) {
-  var chart = AmCharts
-      .makeChart(
-          tragetDivId,
-          {
-            "type" : "stock",
-            "theme" : "none",
+function createStockChart(targetDivId) {
+  
+  var options = {
+      "type" : "stock",
+      "theme" : "none",
 
-            // "color": "#fff",
-            "dataSets" : [ {
-              "dataProvider" : [],
-              "fieldMappings" : [ {
-                "fromField" : "open",
-                "toField" : "open"
-              }, {
-                "fromField" : "high",
-                "toField" : "high"
-              }, {
-                "fromField" : "low",
-                "toField" : "low"
-              }, {
-                "fromField" : "close",
-                "toField" : "close"
-              }, {
-                "fromField" : "volume",
-                "toField" : "volume"
-              }, {
-                "fromField" : "color",
-                "toField" : "color"
-              }, {
-                "fromField" : "count",
-                "toField" : "count"
-              } ],
-              "color" : "#777",
-              "title" : "Stock",
-              "compared" : false,
-              "categoryField" : "date",
+      // "color": "#fff",
+      "dataSets" : [ {
+        "dataProvider" : [],
+        "fieldMappings" : [ {
+          "fromField" : "open",
+          "toField" : "open"
+        }, {
+          "fromField" : "high",
+          "toField" : "high"
+        }, {
+          "fromField" : "low",
+          "toField" : "low"
+        }, {
+          "fromField" : "close",
+          "toField" : "close"
+        }, {
+          "fromField" : "volume",
+          "toField" : "volume"
+        }, {
+          "fromField" : "color",
+          "toField" : "color"
+        }, {
+          "fromField" : "count",
+          "toField" : "count"
+        } ],
+        "color" : "#777",
+        "title" : "Stock",
+        "compared" : false,
+        "categoryField" : "date",
+      } ],
+
+      "panels" : [
+          {
+            "showCategoryAxis" : false,
+            /*
+             * "valueAxis" : { "dashLength" : 5, "maxiumum" : 80 },
+             * "categoryAxis" : { "dashLength" : 1 },
+             */
+            "title" : "",
+            "percentHeight" : 70,
+            "stockGraphs" : [ {
+              "type" : "candlestick",
+              "id" : "g1",
+              "openField" : "open",
+              "closeField" : "close",
+              "highField" : "high",
+              "lowField" : "low",
+              "valueField" : "close",
+              "lineColor" : "#00ff00",
+              "fillColors" : "#00ff00",
+              "negativeLineColor" : "#e05f2f",
+              "negativeFillColors" : "#e05f2f",
+              "fillAlphas" : 1,
+              "comparedGraphLineThickness" : 2,
+              "columnWidth" : 0.7,
+              "useDataSetColors" : false,
+              "comparable" : true,
+              "compareField" : "close",
+              "showBalloon" : false,
+              "proCandlesticks" : true
             } ],
 
-            "panels" : [
-                {
-                  "showCategoryAxis" : false,
-                  /*
-                   * "valueAxis" : { "dashLength" : 5, "maxiumum" : 80 },
-                   * "categoryAxis" : { "dashLength" : 1 },
-                   */
-                  "title" : "",
-                  "percentHeight" : 70,
-                  "stockGraphs" : [ {
-                    "type" : "candlestick",
-                    "id" : "g1",
-                    "openField" : "open",
-                    "closeField" : "close",
-                    "highField" : "high",
-                    "lowField" : "low",
-                    "valueField" : "close",
-                    "lineColor" : "#00ff00",
-                    "fillColors" : "#00ff00",
-                    "negativeLineColor" : "#e05f2f",
-                    "negativeFillColors" : "#e05f2f",
-                    "fillAlphas" : 1,
-                    "comparedGraphLineThickness" : 2,
-                    "columnWidth" : 0.7,
-                    "useDataSetColors" : false,
-                    "comparable" : true,
-                    "compareField" : "close",
-                    "showBalloon" : false,
-                    "proCandlesticks" : true
-                  } ],
-
-                  "stockLegend" : {
-                    "markerSize" : 0,
-                    "labelText" : "",
-                    "markerType" : "none",
-                    "valueTextRegular" : "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]]",
-                  // "periodValueTextComparing": "[[percents.value.close]]%"
-                  }
-                }, {
-                  "title" : "Volume",
-                  "percentHeight" : 40,
-                  "marginTop" : 0,
-                  "columnWidth" : 0.7,
-                  "showCategoryAxis" : true,
-                  "marginTop": 200,
-                  "stockGraphs" : [ {
-                    "valueField" : "volume",
-                    "countField" : "count",
-                    "fillColorsField" : "color",
-                    "lineColorField" : "color",
-                    "type" : "column",
-                    "showBalloon" : false,
-                    "showBalloonAt": "top",
-                    "balloonText" : "#Results: <b>[[count]]</b>",
-                    "fillAlphas" : 1,
-                    "lineColor" : "#22272c",
-                    "fillColors" : "#22272c",
-                  } ],
-                  "stockLegend" : {                    
-                    "enabled" : false,
-                    "markerType" : "none",
-                    "markerSize" : 0,
-                    "labelText" : "",
-                    "periodValueTextRegular" : "[[volume]]"
-                  },
-                  "valueAxes" : [ {
-                    "usePrefixes" : true
-                  } ]
-                } ],
-
-            "panelsSettings" : {
-              "color" : "#080e15",
-              "plotAreaFillColors" : "#080e15",
-              "plotAreaFillAlphas" : 1,
-              "marginLeft" : 60,
-              "marginTop" : 5,
-              "marginBottom" : 5
+            "stockLegend" : {
+              "markerSize" : 0,
+              "labelText" : "",
+              "markerType" : "none",
+              "valueTextRegular" : "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]]",
+            // "periodValueTextComparing": "[[percents.value.close]]%"
+            }
+          }, {
+            "title" : "Volume",
+            "percentHeight" : 30,
+            "marginTop" : 0,
+            "columnWidth" : 0.7,
+            "showCategoryAxis" : true,
+            "marginTop": 0,
+            "stockGraphs" : [ {
+              "valueField" : "volume",
+              "countField" : "count",
+              "fillColorsField" : "color",
+              "lineColorField" : "color",
+              "type" : "column",
+              "showBalloon" : false,
+              "showBalloonAt": "top",
+              "balloonText" : "#Results: <b>[[count]]</b>",
+              "fillAlphas" : 1,
+              "lineColor" : "#22272c",
+              "fillColors" : "#22272c",
+            } ],
+            "stockLegend" : {                    
+              "enabled" : false,
+              "markerType" : "none",
+              "markerSize" : 0,
+              "labelText" : "",
+              "periodValueTextRegular" : "[[volume]]"
             },
+            "valueAxes" : [ {
+              "usePrefixes" : true
+            } ]
+          } ],
 
-            "chartScrollbarSettings" : {
-              "enabled": false,
-              "graph" : "g1",
-              "graphType" : "line",
-              "usePeriod" : "DD",
-              "backgroundColor" : "#080e15",
-              "graphFillColor" : "#666",
-              "graphFillAlpha" : 0.5,
-              "gridColor" : "#fff",
-              "gridAlpha" : 1,
-              "selectedBackgroundColor" : "#444",
-              "selectedGraphFillAlpha" : 1
-            },
+      "panelsSettings" : {
+        "color" : "#080e15",
+        "plotAreaFillColors" : "#080e15",
+        "plotAreaFillAlphas" : 1,
+        "marginLeft" : 60,
+        "marginTop" : 5,
+        "marginBottom" : 5
+      },
 
-            "categoryAxesSettings" : {
-              "equalSpacing" : false,
-              "gridAlpha" : 0.5,
-              "maxSeries" : 240000,
-              "minPeriod" : "1DD",
-              "gridColor" : "#ffffff",
-              "dateFormats" : [ {
-                period : 'fff',
-                format : 'JJ:NN:SS.fff'
-              }, {
-                period : 'ss',
-                format : 'JJ:NN:SS'
-              }, {
-                period : 'mm',
-                format : 'JJ:NN'
-              }, {
-                period : 'hh',
-                format : 'LA'
-              }, {
-                period : 'DD',
-                format : 'MMM DD'
-              }, {
-                period : 'WW',
-                format : 'MMM DD'
-              }, {
-                period : 'MM',
-                format : 'MMM'
-              }, {
-                period : 'YYYY',
-                format : 'YYYY'
-              } ]
-            },
+      "chartScrollbarSettings" : {
+        "enabled": false,
+        "graph" : "g1",
+        "graphType" : "line",
+        "usePeriod" : "DD",
+        "backgroundColor" : "#080e15",
+        "graphFillColor" : "#666",
+        "graphFillAlpha" : 0.5,
+        "gridColor" : "#fff",
+        "gridAlpha" : 1,
+        "selectedBackgroundColor" : "#444",
+        "selectedGraphFillAlpha" : 1
+      },
 
-            "valueAxesSettings" : {
-              "gridColor" : "#ffffff",
-              "gridAlpha" : 0.5,
-              "inside" : false,
-              "dateFormats" : [ {
-                period : 'fff',
-                format : 'JJ:NN:SS.fff'
-              }, {
-                period : 'ss',
-                format : 'JJ:NN:SS'
-              }, {
-                period : 'mm',
-                format : 'JJ:NN'
-              }, {
-                period : 'hh',
-                format : 'LA'
-              }, {
-                period : 'DD',
-                format : 'MMM DD'
-              }, {
-                period : 'WW',
-                format : 'MMM DD'
-              }, {
-                period : 'MM',
-                format : 'MMM'
-              }, {
-                period : 'YYYY',
-                format : 'YYYY'
-              } ]
-            },
+      "categoryAxesSettings" : {
+        "equalSpacing" : false,
+        "gridAlpha" : 0.5,
+        "maxSeries" : 240000,
+        "minPeriod" : "1DD",
+        "gridColor" : "#ffffff",
+        "dateFormats" : [ {
+          period : 'fff',
+          format : 'JJ:NN:SS.fff'
+        }, {
+          period : 'ss',
+          format : 'JJ:NN:SS'
+        }, {
+          period : 'mm',
+          format : 'JJ:NN'
+        }, {
+          period : 'hh',
+          format : 'LA'
+        }, {
+          period : 'DD',
+          format : 'MMM DD'
+        }, {
+          period : 'WW',
+          format : 'MMM DD'
+        }, {
+          period : 'MM',
+          format : 'MMM'
+        }, {
+          period : 'YYYY',
+          format : 'YYYY'
+        } ]
+      },
 
-            "chartCursorSettings" : {
-              "fullWidth" : true,
-              "cursorColor" : '#e05f2f',
-              "cursorAlpha" : 0.7,
-              "pan" : true,
-              "cursorPosition" : "middle",
-              "valueLineEnabled" : true,
-              "valueLineBalloonEnabled" : true,
-              "categoryBalloonDateFormats" : [ {
-                period : "YYYY",
-                format : "YYYY"
-              }, {
-                period : "MM",
-                format : "YYYY-MM"
-              }, {
-                period : "WW",
-                format : "YYYY-MM-DD"
-              }, {
-                period : "DD",
-                format : "YYYY-MM-DD"
-              }, {
-                period : "hh",
-                format : "LA"
-              }, {
-                period : "mm",
-                format : "JJ:NN"
-              }, {
-                period : "ss",
-                format : "JJ:NN:SS"
-              }, {
-                period : "fff",
-                format : "JJ:NN:SS.fff"
-              } ]
-            },
+      "valueAxesSettings" : {
+        "gridColor" : "#ffffff",
+        "gridAlpha" : 0.5,
+        "inside" : false,
+        "dateFormats" : [ {
+          period : 'fff',
+          format : 'JJ:NN:SS.fff'
+        }, {
+          period : 'ss',
+          format : 'JJ:NN:SS'
+        }, {
+          period : 'mm',
+          format : 'JJ:NN'
+        }, {
+          period : 'hh',
+          format : 'LA'
+        }, {
+          period : 'DD',
+          format : 'MMM DD'
+        }, {
+          period : 'WW',
+          format : 'MMM DD'
+        }, {
+          period : 'MM',
+          format : 'MMM'
+        }, {
+          period : 'YYYY',
+          format : 'YYYY'
+        } ]
+      },
 
-            "legendSettings" : {
-            // "color": "#fff"
-            },
+      "chartCursorSettings" : {
+        "fullWidth" : true,
+        "cursorColor" : '#e05f2f',
+        "cursorAlpha" : 0.7,
+        "pan" : true,
+        "cursorPosition" : "middle",
+        "valueLineEnabled" : true,
+        "valueLineBalloonEnabled" : true,
+        "categoryBalloonDateFormats" : [ {
+          period : "YYYY",
+          format : "YYYY"
+        }, {
+          period : "MM",
+          format : "YYYY-MM"
+        }, {
+          period : "WW",
+          format : "YYYY-MM-DD"
+        }, {
+          period : "DD",
+          format : "YYYY-MM-DD"
+        }, {
+          period : "hh",
+          format : "LA"
+        }, {
+          period : "mm",
+          format : "JJ:NN"
+        }, {
+          period : "ss",
+          format : "JJ:NN:SS"
+        }, {
+          period : "fff",
+          format : "JJ:NN:SS.fff"
+        } ]
+      },
 
-            "stockEventsSettings" : {
-              "showAt" : "high",
-              "type" : "pin"
-            },
+      "legendSettings" : {
+      // "color": "#fff"
+      },
 
-            "balloon" : {
-              "textAlign" : "left",
-              "offsetY" : 10
-            },
+      "stockEventsSettings" : {
+        "showAt" : "high",
+        "type" : "pin"
+      },
 
-            "periodSelector" : {
-              "hideOutOfScopePeriods" : true,
-              "inputFieldsEnabled" : false,
-              "position" : "bottom",
-              "periods" : [ {
-                "period" : "hh",
-                "count" : 1,
-                "label" : "1 Hour"
-              }, {
-                "period" : "DD",
-                "count" : 1,
-                "label" : "1 Day"
-              }, {
-                "period" : "DD",
-                "count" : 15,
-                "label" : "15 Days"
-              }, {
-                "period" : "MM",
-                "count" : 1,
-                "label" : "1 Month"
-              }, {
-                "period" : "MAX",
-                "label" : "MAX"
-              } ]
-            },
-            "listeners": [{
-              "event": "dataUpdated",
-              "method": function(e) {
-                for (var x in e.chart.periodSelector.periods) {
-                  var period = e.chart.periodSelector.periods[x];
-                  if ('MAX' == period.period) {
-                    period.selected = true;
-                  } else {
-                    period.selected = false;
-                  }
-                }
-
-                e.chart.periodSelector.setDefaultPeriod();
+      "balloon" : {
+        "textAlign" : "left",
+        "offsetY" : 10
+      },
+      "listeners": [{
+        "event": "dataUpdated",
+        "method": function(e) {
+          
+          if (targetDivId == 'history_chart') {
+            for (var x in e.chart.periodSelector.periods) {
+              var period = e.chart.periodSelector.periods[x];
+              if ('MAX' == period.period) {
+                period.selected = true;
+              } else {
+                period.selected = false;
               }
-            }]
-          });
+            }
+
+            e.chart.periodSelector.setDefaultPeriod();
+            
+          }else{
+            var data = e.chart.dataSets[0].dataProvider;
+            if (data.length > 0)
+              e.chart.zoom(new Date(data[0].date), new Date(data[data.length-1].date));
+          }
+        }
+      }]
+  };
+  
+  var period_options = {
+      "periodSelector" : {
+        "hideOutOfScopePeriods" : true,
+        "inputFieldsEnabled" : false,
+        "position" : "bottom",
+        "periods" : [ {
+          "period" : "hh",
+          "count" : 1,
+          "label" : "1 Hour"
+        }, {
+          "period" : "DD",
+          "count" : 1,
+          "label" : "1 Day"
+        }, {
+          "period" : "DD",
+          "count" : 15,
+          "label" : "15 Days"
+        }, {
+          "period" : "MM",
+          "count" : 1,
+          "label" : "1 Month"
+        }, {
+          "period" : "MAX",
+          "label" : "MAX"
+        } ]
+      },
+  }
+  
+  if (targetDivId == 'history_chart') {
+    options =$.extend(true, options, period_options);
+  }
+  
+  var chart = AmCharts.makeChart(targetDivId, options);
 
   return chart;
 }
@@ -846,7 +860,7 @@ jQuery(document).ready(
         $('#strategy_body').removeClass('hidden');
         if (detail == undefined) {
           detail = createStockChart('detail_chart');
-//          delete detail.periodSelector;
+          $("#detail_chart .amcharts-period-selector-div").remove();
         }
           
         
@@ -884,7 +898,7 @@ jQuery(document).ready(
           $('#compare_chart_1').removeClass('hidden');
           if (compare1 == undefined) {
             compare1 = createStockChart('compare_chart_1');
-//            delete compare1.periodSelector;
+            $("#compare_chart_1 .amcharts-period-selector-div").remove();
           }
             
           refresh_compare1_chart();
