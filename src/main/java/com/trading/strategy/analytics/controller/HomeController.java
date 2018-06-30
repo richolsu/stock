@@ -1,13 +1,12 @@
 package com.trading.strategy.analytics.controller;
 
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +37,9 @@ public class HomeController {
 
 	@Autowired
 	private StrategyRepository strategyRepository;
+
+	private Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+	private SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@GetMapping("/")
 	public String index(Model model) {
@@ -70,19 +72,12 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
-		try {
-			startMs = dateFormat.parse(startDate).getTime();
-			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Long startMs = getStartDate(startDate).getTime();
+		Long endMs = getEndDate(endDate).getTime();
 
 		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
 
+		logger.info(exchange + " " + symbol + " " + granularityMs + " " + startMs + " " + endMs);
 		List<HistoryResult> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 
 		return result;
@@ -118,16 +113,9 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
-		try {
-			startMs = dateFormat.parse(startDate).getTime();
-			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		logger.info("endDate=" + endDate);
+		Long startMs = getStartDate(startDate).getTime();
+		Long endMs = getEndDate(endDate).getTime();
 
 		Long granularityMs = Long.parseLong(granularityInMs);
 		Double importance = Double.parseDouble(threshold) / 100;
@@ -153,17 +141,8 @@ public class HomeController {
 		String order = requestParams.getOrDefault("order", "name");
 		String dir = requestParams.getOrDefault("dir", "asc");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
-
-		try {
-			startMs = dateFormat.parse(startDate).getTime();
-			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Long startMs = getStartDate(startDate).getTime();
+		Long endMs = getEndDate(endDate).getTime();
 
 		Long granularityMs = Long.parseLong(granularityInMs);
 		Double importance = Double.parseDouble(threshold) / 100;
@@ -191,22 +170,15 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		Long startMs = Instant.now().getEpochSecond() * 1000, endMs = Instant.now().getEpochSecond() * 1000;
-		try {
-			startMs = dateFormat.parse(startDate).getTime();
-			endMs = getNextDate(dateFormat.parse(endDate)).getTime();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		logger.info("startDate=" + startDate);
+		Long startMs = getStartDate(startDate).getTime();
+		Long endMs = getEndDate(endDate).getTime();
 
 		Long granularityMs = Long.parseLong(granularityInMs);
 		Double importance = Double.parseDouble(threshold) / 100;
 
-		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
-				+ " " + endMs);
+		logger.info("strategy=" + strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance
+				+ " " + startMs + " " + endMs);
 		List<BigInteger> result = strategyRepository.findListForResult(strategy, exchange, symbol, granularityMs,
 				importance, startMs, endMs);
 
@@ -214,9 +186,45 @@ public class HomeController {
 	}
 
 	private Date getNextDate(Date date) {
-		Calendar c = Calendar.getInstance();
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		c.setTime(date);
 		c.add(Calendar.DATE, 1); // number of days to add
 		return c.getTime();
+	}
+
+	private Date getStartDate(String startDateStr) {
+
+		logger.info("start=" + startDateStr);
+		Date date = calendar.getTime();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		dateFormat2.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			date = dateFormat.parse(startDateStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("start=" + dateFormat2.format(date));
+		return date;
+	}
+
+	private Date getEndDate(String endDateStr) {
+		logger.info("start=" + endDateStr);
+		Date date = calendar.getTime();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		try {
+			date = dateFormat.parse(endDateStr);
+			calendar.setTime(date);
+			calendar.add(Calendar.DATE, 1); // number of days to add
+			date = calendar.getTime();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		dateFormat2.setTimeZone(TimeZone.getTimeZone("UTC"));
+		logger.info("end=" + dateFormat2.format(date));
+		return date;
 	}
 }

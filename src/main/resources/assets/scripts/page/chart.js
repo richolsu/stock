@@ -69,11 +69,12 @@ function formatUTCTime(time) {
   return formatTime(time + new Date().getTimezoneOffset()*60*1000);  
 }
 
+AmCharts.useUTC = true;
 function createStockChart(targetDivId) {
   
   var options = {
       "type" : "stock",
-      "theme" : "none",
+      "theme": "light",
 
       // "color": "#fff",
       "dataSets" : [ {
@@ -157,8 +158,6 @@ function createStockChart(targetDivId) {
               "fillColorsField" : "color",
               "lineColorField" : "color",
               "type" : "column",
-              "showBalloon" : false,
-              "showBalloonAt": "top",
               "balloonText" : "#Results: <b>[[count]]</b>",
               "fillAlphas" : 1,
               "lineColor" : "#22272c",
@@ -181,8 +180,9 @@ function createStockChart(targetDivId) {
         "plotAreaFillColors" : "#080e15",
         "plotAreaFillAlphas" : 1,
         "marginLeft" : 60,
-        "marginTop" : 5,
-        "marginBottom" : 5
+        "marginRight": 10,
+        "marginTop" : 0,
+        "marginBottom" : 0
       },
 
       "chartScrollbarSettings" : {
@@ -415,7 +415,7 @@ jQuery(document).ready(
         searching : false,
         ordering : true,
         scrollY: "200px",
-        scrollCollapse: true,
+        scrollX : true,
         paging: false,
         ajax : {
           url : strategy_page_url,
@@ -461,6 +461,9 @@ jQuery(document).ready(
             return Number.parseFloat(data).toFixed(4);
           },
           title : 'Trading Volume'
+        }, {
+          data : 'count',
+          title : 'Count'            
         }, {
           data : 'open',
           render : formatValue,
@@ -592,7 +595,7 @@ jQuery(document).ready(
             histo.dataSets[0].dataProvider = data;
             
             histo.validateData();
-            histo.validateNow();
+//            histo.validateNow();
 
           },
         });
@@ -661,7 +664,7 @@ jQuery(document).ready(
 
             detail.dataSets[0].dataProvider = data;
             detail.validateData();
-            detail.validateNow();
+//            detail.validateNow();
 
           },
         });
@@ -765,7 +768,7 @@ jQuery(document).ready(
 
             compare1.dataSets[0].dataProvider = data;
             compare1.validateData();
-            compare1.validateNow();
+//            compare1.validateNow();
           },
         });
 
@@ -830,7 +833,7 @@ jQuery(document).ready(
 
             compare2.dataSets[0].dataProvider = data;
             compare2.validateData();
-            compare2.validateNow();
+//            compare2.validateNow();
 
           },
         });
@@ -953,12 +956,12 @@ jQuery(document).ready(
         }else{
           $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
             hist_value.color = normal_bar_color;
-            histo.panels[1].stockGraphs[0].showBalloon = false;
+            //histo.panels[1].stockGraphs[0].showBalloon = false;
           });
         }
         
         histo.validateData();
-        histo.validateNow();
+//        histo.validateNow();
               
       }
       

@@ -22,6 +22,7 @@ table.dataTable tbody tr.selected {
 .compare-box {
     margin: 5px -1px 0;
 }
+/*
 #detail_chart .amChartsButton, #detail_chart .amChartsButtonSelected,
 #compare_chart_1 .amChartsButton, #compare_chart_1 .amChartsButtonSelected,
 #compare_chart_2 .amChartsButton, #compare_chart_2 .amChartsButtonSelected {
@@ -31,6 +32,11 @@ table.dataTable tbody tr.selected {
 
 .amcharts-stock-panel-div-stockPanel1{
     margin-top:-12px !important;
+}
+*/
+.compare-select {
+    margin:0 !important;
+    padding:0 !important;
 }
 </style>
 </head>
@@ -128,7 +134,7 @@ table.dataTable tbody tr.selected {
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered nowrap table-striped compact" id="strategy_result">
+                                <table class="table table-bordered nowrap table-striped compact" width="100%" id="strategy_result">
                                 </table>
                             </div>
                         </div>
@@ -157,8 +163,10 @@ table.dataTable tbody tr.selected {
 
                         <div class="row bg-grey-steel bg-font-grey-steel compare-box">
                             <div class="col-md-2">
-                                <div class="form-group form-md-line-input form-inline">
+                                <div class="form-group form-md-line-input form-inline  compare-select">
                                     <label>Compare with:</label>
+                                </div>
+                                <div class="form-group form-md-line-input form-inline  compare-select">
                                     <select class="form-control" id="compare1_exchange">
                                     </select>
                                     <select class="form-control" id="compare1_trading_pair">
@@ -173,8 +181,10 @@ table.dataTable tbody tr.selected {
                         </div>
                         <div class="row bg-grey-steel bg-font-grey-steel compare-box">
                             <div class="col-md-2">
-                              <div class="form-group form-md-line-input form-inline">
+                              <div class="form-group form-md-line-input form-inline compare-select">
                                   <label>Compare with:</label>
+                              </div>
+                                <div class="form-group form-md-line-input form-inline  compare-select">
                                   <select class="form-control" id="compare2_exchange">
                                   </select>
                                   <select class="form-control" id="compare2_trading_pair">

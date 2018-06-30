@@ -18,8 +18,8 @@ import com.trading.strategy.analytics.model.StrategySearchItem;
 
 public interface StrategyRepository extends JpaRepository<Strategy, Long> {
 	@Query(value = "SELECT a.high, a.low, a.volume, a.startMs, a.count, round(b.importance*100, 2) importance, a.open, a.close  FROM OHLC a left join strategy b on a.exchange=b.exchange and a.symbol=b.symbol and a.granularityInMs=b.granularityInMs and a.startMs=b.startMs and b.strategyName= :strategy "
-			+ "where a.exchange = :exchange and a.symbol = :symbol and a.granularityInMs = :granularityInMs and b.importance> :importance and "
-			+ "a.startMs>= :startMs and a.startMs < :endMs", nativeQuery = true)
+			+ "where b.exchange = :exchange and b.symbol = :symbol and b.granularityInMs = :granularityInMs and b.importance> :importance and "
+			+ "b.startMs>= :startMs and b.startMs < :endMs", nativeQuery = true)
 
 	public Page<StrategySearchItem> findAllForStrategy(@Param("strategy") String strategy,
 			@Param("exchange") String exchange, @Param("symbol") String symbol,
