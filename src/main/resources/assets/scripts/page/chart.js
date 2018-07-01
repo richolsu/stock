@@ -148,10 +148,9 @@ function createStockChart(targetDivId) {
           }, {
             "title" : "Volume",
             "percentHeight" : 30,
-            "marginTop" : 0,
             "columnWidth" : 0.7,
             "showCategoryAxis" : true,
-            "marginTop": 0,
+            "marginTop": 10,
             "stockGraphs" : [ {
               "valueField" : "volume",
               "countField" : "count",
@@ -170,19 +169,17 @@ function createStockChart(targetDivId) {
               "labelText" : "",
               "periodValueTextRegular" : "[[volume]]"
             },
-            "valueAxes" : [ {
-              "usePrefixes" : true
-            } ]
           } ],
 
       "panelsSettings" : {
         "color" : "#080e15",
         "plotAreaFillColors" : "#080e15",
         "plotAreaFillAlphas" : 1,
-        "marginLeft" : 60,
+        "marginLeft" : 10,
         "marginRight": 10,
         "marginTop" : 0,
-        "marginBottom" : 0
+        "marginBottom" : 0,
+        "usePrefixes" : true
       },
 
       "chartScrollbarSettings" : {
@@ -200,6 +197,8 @@ function createStockChart(targetDivId) {
       },
 
       "categoryAxesSettings" : {
+        "boldPeriodBeginning":false,
+        "markPeriodChange":false,
         "equalSpacing" : false,
         "gridAlpha" : 0.5,
         "maxSeries" : 240000,
@@ -207,13 +206,13 @@ function createStockChart(targetDivId) {
         "gridColor" : "#ffffff",
         "dateFormats" : [ {
           period : 'fff',
-          format : 'JJ:NN:SS.fff'
+          format : 'JJ:NN:SS.QQQ'
         }, {
           period : 'ss',
           format : 'JJ:NN:SS'
         }, {
           period : 'mm',
-          format : 'JJ:NN'
+          format : 'JJ:NN:SS'
         }, {
           period : 'hh',
           format : 'LA'
@@ -225,7 +224,7 @@ function createStockChart(targetDivId) {
           format : 'MMM DD'
         }, {
           period : 'MM',
-          format : 'MMM'
+          format : 'MMM DD'
         }, {
           period : 'YYYY',
           format : 'YYYY'
@@ -235,32 +234,8 @@ function createStockChart(targetDivId) {
       "valueAxesSettings" : {
         "gridColor" : "#ffffff",
         "gridAlpha" : 0.5,
-        "inside" : false,
-        "dateFormats" : [ {
-          period : 'fff',
-          format : 'JJ:NN:SS.fff'
-        }, {
-          period : 'ss',
-          format : 'JJ:NN:SS'
-        }, {
-          period : 'mm',
-          format : 'JJ:NN'
-        }, {
-          period : 'hh',
-          format : 'LA'
-        }, {
-          period : 'DD',
-          format : 'MMM DD'
-        }, {
-          period : 'WW',
-          format : 'MMM DD'
-        }, {
-          period : 'MM',
-          format : 'MMM'
-        }, {
-          period : 'YYYY',
-          format : 'YYYY'
-        } ]
+        "color": "#ffffff",
+        "inside" : true,        
       },
 
       "chartCursorSettings" : {
@@ -297,6 +272,7 @@ function createStockChart(targetDivId) {
           format : "JJ:NN:SS.fff"
         } ]
       },
+
 
       "legendSettings" : {
       // "color": "#fff"
