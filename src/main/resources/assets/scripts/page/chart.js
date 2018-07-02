@@ -98,6 +98,9 @@ function createStockChart(targetDivId) {
           "fromField" : "color",
           "toField" : "color"
         }, {
+          "fromField" : "labelColor",
+          "toField" : "labelColor"            
+        }, {
           "fromField" : "count",
           "toField" : "count"
         } ],
@@ -109,11 +112,16 @@ function createStockChart(targetDivId) {
 
       "panels" : [
           {
-            "showCategoryAxis" : false,
-            /*
-             * "valueAxis" : { "dashLength" : 5, "maxiumum" : 80 },
-             * "categoryAxis" : { "dashLength" : 1 },
-             */
+            "showCategoryAxis" : false,    
+            
+//            "valueAxis" : { 
+//              "showFirstLabel":false,
+//              "dashLength" : 5, 
+//              "maxiumum" : 80 
+//            },
+//              "categoryAxis" : { 
+//              "dashLength" : 1 
+//            },             
             "title" : "",
             "percentHeight" : 70,
             "stockGraphs" : [ {
@@ -150,15 +158,18 @@ function createStockChart(targetDivId) {
             "percentHeight" : 30,
             "columnWidth" : 0.7,
             "showCategoryAxis" : true,
-            "marginTop": 10,
+            "marginTop": 20,
             "stockGraphs" : [ {
               "valueField" : "volume",
               "countField" : "count",
               "fillColorsField" : "color",
               "lineColorField" : "color",
               "type" : "column",
+              "labelColorField": "labelColor",
+              "labelPosition": "inside",
               "balloonText" : "#Results: <b>[[count]]</b>",
               "fillAlphas" : 1,
+              "showBalloon": false,
               "lineColor" : "#22272c",
               "fillColors" : "#22272c",
             } ],
@@ -175,11 +186,11 @@ function createStockChart(targetDivId) {
         "color" : "#080e15",
         "plotAreaFillColors" : "#080e15",
         "plotAreaFillAlphas" : 1,
-        "marginLeft" : 10,
+        "marginLeft" : 60,
         "marginRight": 10,
         "marginTop" : 0,
         "marginBottom" : 0,
-        "usePrefixes" : true
+        "usePrefixes" : false
       },
 
       "chartScrollbarSettings" : {
@@ -206,7 +217,7 @@ function createStockChart(targetDivId) {
         "gridColor" : "#ffffff",
         "dateFormats" : [ {
           period : 'fff',
-          format : 'JJ:NN:SS.QQQ'
+          format : 'NN:SS.QQQ'
         }, {
           period : 'ss',
           format : 'JJ:NN:SS'
@@ -234,8 +245,10 @@ function createStockChart(targetDivId) {
       "valueAxesSettings" : {
         "gridColor" : "#ffffff",
         "gridAlpha" : 0.5,
-        "color": "#ffffff",
-        "inside" : true,        
+//        "color": "#ffffff",
+        "showFirstLabel":true,
+        "showLastLabel":false,
+        "inside" : false,        
       },
 
       "chartCursorSettings" : {
@@ -340,8 +353,15 @@ function createStockChart(targetDivId) {
       },
   }
   
+  var labelOption = {
+      "panels" : [{},{
+        "stockGraphs" : [ {
+        "labelText": "[[count]]",
+        }]
+      }]                    
+  }
   if (targetDivId == 'history_chart') {
-    options =$.extend(true, options, period_options);
+    options =$.extend(true, options, period_options, labelOption);
   }
   
   var chart = AmCharts.makeChart(targetDivId, options);
@@ -352,6 +372,7 @@ function createStockChart(targetDivId) {
 var histo, detail, compare1, compare2, strategy_result;
 var hightlight_bar_color = '#f3c200';
 var normal_bar_color = '#777777';
+var highlight_label_color = '#000000';
   
 jQuery(document).ready(
     function() {
@@ -416,7 +437,7 @@ jQuery(document).ready(
             return json.content;
           },
         },
-        select : true,
+        select : { style: 'single' },
         columns : [ {
           data : 'startMs',
           render : formatTime,
@@ -460,6 +481,7 @@ jQuery(document).ready(
           data : 'startMs',
           title : 'Start Time in MS'
         } ],
+//        language: {select: {rows: {1: ""}}},
         columnDefs: [
           { className: "dt-right", "targets": [2, 3, 4, 5, 6, 7, 8] }
         ],
@@ -473,6 +495,11 @@ jQuery(document).ready(
         refresh_detail_chart();
       });
 
+      
+      $("#strategy_result").click(function(event) {
+        oTable.row(event.target.parentNode).select();
+      });
+      
       AmCharts.ready(function() {
         histo = createStockChart('history_chart');
 
@@ -547,6 +574,7 @@ jQuery(document).ready(
             $.each(data, function(key, item) {
               item.count = 0;
               item.color = normal_bar_color;
+              item.labelColor = normal_bar_color;
             })
 
             switch ($('#history_granularity').val()) {
@@ -568,6 +596,20 @@ jQuery(document).ready(
                 break;
             }
 
+//            var stockEvents = [ {
+//              date: new Date(1525132800000),
+//              type: "arrowUp",
+//              backgroundColor: "#00CC00",
+//              graph: "g1",
+//              description: "Highest value"
+//            }, {
+//              date: new Date(1528243200000),
+//              type: "arrowDown",
+//              backgroundColor: "#CC0000",
+//              graph: "g1",
+//              description: "Lowest value"
+//            } ];
+//            histo.dataSets[0].stockEvents = stockEvents;
             histo.dataSets[0].dataProvider = data;
             
             histo.validateData();
@@ -922,8 +964,12 @@ jQuery(document).ready(
             
             if (hist_value.count>0) {
               hist_value.color = hightlight_bar_color;
+              hist_value.labelColor = highlight_label_color;
+
             } else {
               hist_value.color = normal_bar_color;
+              hist_value.labelColor = normal_bar_color;
+
             }
 
           });
@@ -932,7 +978,8 @@ jQuery(document).ready(
         }else{
           $.each(histo.dataSets[0].dataProvider, function(key, hist_value) {
             hist_value.color = normal_bar_color;
-            //histo.panels[1].stockGraphs[0].showBalloon = false;
+            hist_value.labelColor = normal_bar_color;
+            histo.panels[1].stockGraphs[0].showBalloon = false;
           });
         }
         
