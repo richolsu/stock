@@ -77,7 +77,6 @@ public class HomeController {
 
 		Long granularityMs = Long.parseLong(granularityInMs) * 60000;
 
-		logger.info(exchange + " " + symbol + " " + granularityMs + " " + startMs + " " + endMs);
 		List<HistoryResult> result = ohlcRepository.findAllForHistory(exchange, symbol, granularityMs, startMs, endMs);
 
 		return result;
@@ -113,15 +112,12 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		logger.info("endDate=" + endDate);
 		Long startMs = getStartDate(startDate).getTime();
 		Long endMs = getEndDate(endDate).getTime();
 
 		Long granularityMs = Long.parseLong(granularityInMs);
 		Double importance = Double.parseDouble(threshold) / 100;
 
-		logger.info(strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance + " " + startMs
-				+ " " + endMs);
 		StrategyResult result = strategyRepository.findResultOfStrategy(strategy, exchange, symbol, granularityMs,
 				importance, startMs, endMs);
 
@@ -170,15 +166,12 @@ public class HomeController {
 		String startDate = requestParams.get("start_date");
 		String endDate = requestParams.get("end_date");
 
-		logger.info("startDate=" + startDate);
 		Long startMs = getStartDate(startDate).getTime();
 		Long endMs = getEndDate(endDate).getTime();
 
 		Long granularityMs = Long.parseLong(granularityInMs);
 		Double importance = Double.parseDouble(threshold) / 100;
 
-		logger.info("strategy=" + strategy + " " + exchange + " " + symbol + " " + granularityMs + " " + importance
-				+ " " + startMs + " " + endMs);
 		List<BigInteger> result = strategyRepository.findListForResult(strategy, exchange, symbol, granularityMs,
 				importance, startMs, endMs);
 
@@ -194,7 +187,6 @@ public class HomeController {
 
 	private Date getStartDate(String startDateStr) {
 
-		logger.info("start=" + startDateStr);
 		Date date = calendar.getTime();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -205,12 +197,10 @@ public class HomeController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		logger.info("start=" + dateFormat2.format(date));
 		return date;
 	}
 
 	private Date getEndDate(String endDateStr) {
-		logger.info("start=" + endDateStr);
 		Date date = calendar.getTime();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -224,7 +214,6 @@ public class HomeController {
 			e.printStackTrace();
 		}
 		dateFormat2.setTimeZone(TimeZone.getTimeZone("UTC"));
-		logger.info("end=" + dateFormat2.format(date));
 		return date;
 	}
 }

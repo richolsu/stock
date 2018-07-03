@@ -150,7 +150,7 @@ function createStockChart(targetDivId) {
               "markerSize" : 0,
               "labelText" : "",
               "markerType" : "none",
-              "valueTextRegular" : "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]]",
+              "valueTextRegular" : "Open: [[open]] High: [[high]] Low: [[low]] Close: [[close]] Volume: [[volume]]",
             // "periodValueTextComparing": "[[percents.value.close]]%"
             }
           }, {
@@ -188,7 +188,7 @@ function createStockChart(targetDivId) {
         "plotAreaFillColors" : "#080e15",
         "plotAreaFillAlphas" : 1,
         "marginLeft" : 80,
-        "marginRight": 30,
+        "marginRight": 40,
         "marginTop" : 5,
         "marginBottom" : 5,
         "usePrefixes" : false
@@ -574,6 +574,7 @@ jQuery(document).ready(
           success : function(data, res) {
             $.each(data, function(key, item) {
               item.count = 0;
+              item.volume = Number.parseFloat(item.volume).toFixed(4);
               item.color = normal_bar_color;
               item.labelColor = normal_bar_color;
             })
@@ -658,6 +659,7 @@ jQuery(document).ready(
             data = check_data(data, startMs, endMs, 'detail');
 
             $.each(data, function(key, item) {
+              item.volume = Number.parseFloat(item.volume).toFixed(4);
               item.count = 0;
               item.color = normal_bar_color;
             })
@@ -762,6 +764,7 @@ jQuery(document).ready(
             data = check_data(data, startMs, endMs, 'first compare');
 
             $.each(data, function(key, item) {
+              item.volume = Number.parseFloat(item.volume).toFixed(4);
               item.count = 0;
               item.color = normal_bar_color;
             })
@@ -827,6 +830,7 @@ jQuery(document).ready(
             data = check_data(data, startMs, endMs, 'second compare');
 
             $.each(data, function(key, item) {
+              item.volume = Number.parseFloat(item.volume).toFixed(4);
               item.count = 0;
               item.color = normal_bar_color;
             })
