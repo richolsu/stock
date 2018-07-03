@@ -166,6 +166,7 @@ function createStockChart(targetDivId) {
               "lineColorField" : "color",
               "type" : "column",
               "labelColorField": "labelColor",
+              "labelOffset": -3,
               "labelPosition": "inside",
               "balloonText" : "#Results: <b>[[count]]</b>",
               "fillAlphas" : 1,
@@ -186,10 +187,10 @@ function createStockChart(targetDivId) {
         "color" : "#080e15",
         "plotAreaFillColors" : "#080e15",
         "plotAreaFillAlphas" : 1,
-        "marginLeft" : 60,
-        "marginRight": 10,
-        "marginTop" : 0,
-        "marginBottom" : 0,
+        "marginLeft" : 80,
+        "marginRight": 30,
+        "marginTop" : 5,
+        "marginBottom" : 5,
         "usePrefixes" : false
       },
 
@@ -217,7 +218,7 @@ function createStockChart(targetDivId) {
         "gridColor" : "#ffffff",
         "dateFormats" : [ {
           period : 'fff',
-          format : 'NN:SS.QQQ'
+          format : 'JJ:NN:SS.QQQ'
         }, {
           period : 'ss',
           format : 'JJ:NN:SS'
@@ -873,6 +874,9 @@ jQuery(document).ready(
           },
           success : function(data, res) {
             strategy_result = data;
+            if ($('#display_on_chart').is(':checked')) {
+              display_on_chart();
+            }
           }
         });
       }
