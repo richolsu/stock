@@ -158,6 +158,47 @@ function createStockChart(targetDivId) {
             "percentHeight" : 30,
             "columnWidth" : 0.7,
             "showCategoryAxis" : true,
+
+            "categoryAxis": {
+              "boldPeriodBeginning":false,
+              "markPeriodChange":false,
+              "equalSpacing" : false,
+              "gridAlpha" : 0.5,
+              "maxSeries" : 240000,
+              "minPeriod" : "1DD",
+              "gridColor" : "#ffffff",
+              "dateFormats" : [ {
+                period : 'fff',
+                format : 'JJ:NN:SS.QQQ'
+              }, {
+                period : 'ss',
+                format : 'JJ:NN:SS'
+              }, {
+                period : 'mm',
+                format : 'JJ:NN:SS'
+              }, {
+                period : 'hh',
+                format : 'LA'
+              }, {
+                period : 'DD',
+                format : 'MMM DD'
+              }, {
+                period : 'WW',
+                format : 'MMM DD'
+              }, {
+                period : 'MM',
+                format : 'MMM DD'
+              }, {
+                period : 'YYYY',
+                format : 'YYYY'
+              } ],
+              "labelFunction": function(valueText, date, categoryAxis) {
+                if (this.minPeriod == "100fff"){
+                  valueText = valueText.substr(0, valueText.length-2);
+                }
+                return valueText;
+              }
+            },
             "marginTop": 20,
             "stockGraphs" : [ {
               "valueField" : "volume",
@@ -286,7 +327,6 @@ function createStockChart(targetDivId) {
           format : "JJ:NN:SS.fff"
         } ]
       },
-
 
       "legendSettings" : {
       // "color": "#fff"
@@ -491,14 +531,14 @@ jQuery(document).ready(
           $('#strategy_result').DataTable().row(':eq(0)', {
             page : 'current'
           }).select();
+          refresh_detail_chart();
         }
-      }).on('select', function(e, dt, type, indexes) {
-        refresh_detail_chart();
       });
 
       
       $("#strategy_result").click(function(event) {
         oTable.row(event.target.parentNode).select();
+        refresh_detail_chart();
       });
       
       AmCharts.ready(function() {
@@ -520,16 +560,39 @@ jQuery(document).ready(
       }
       
       
-      function check_data(data, startMs, endMs, chart_name) {
+      function check_data(data, startMs, endMs, chart) {
+        var chart_name = '';
+        switch(chart) {
+          case detail: 
+            chart_name='detail';
+            break;
+          case compare1: 
+            chart_name='compare1';
+            break;
+          case compare2: 
+            chart_name='compare2';
+            break;
+            
+        }
         if (data.length == 0) {
           toastr.warning("There are no data to draw " + chart_name + " chart", "Sorry!");
+          data = {
+            dummyValue: 0
+          };
+          chart.panels[0].addLabel(0, '50%', 'The chart contains no data', 'center', 14, 'yellow');
+          chart.dataSets[0].dataProvider = data;
+          chart.validateNow();
         }else{
+          chart.panels[0].clearLabels();
           var open=0, high=0, low=0, close=0;
           $.each(data, function(key, item){
             open += item.open;
             high += item.high;
             low += item.low;
             close += item.close;
+            item.volume = Number.parseFloat(item.volume).toFixed(4);
+            item.count = 0;
+            item.color = normal_bar_color;
           });
           
           open = open/data.length;
@@ -543,9 +606,30 @@ jQuery(document).ready(
           if (data[data.length-1].date<endMs) {
             data.push({date:endMs});
           }
+          
+          switch ($('#time_range_select').val()) {
+            case "100":
+              chart.categoryAxesSettings.minPeriod = "100fff";
+              chart.chartScrollbarSettings.usePeriod = "100fff";
+              break;
+            case "1000":
+              chart.categoryAxesSettings.minPeriod = "1ss";
+              chart.chartScrollbarSettings.usePeriod = "1ss";
+              break;
+            case "3000":
+              chart.categoryAxesSettings.minPeriod = "3ss";
+              chart.chartScrollbarSettings.usePeriod = "3ss";
+              break;
+            case "6000":
+              chart.categoryAxesSettings.minPeriod = "6ss";
+              chart.chartScrollbarSettings.usePeriod = "6ss";
+              break;
+          }
+
+          chart.dataSets[0].dataProvider = data;
+          chart.validateData();
+          
         }
-        
-        return data;
       }
       
       
@@ -572,50 +656,62 @@ jQuery(document).ready(
             end_date : $('#history_to').val()
           },
           success : function(data, res) {
-            $.each(data, function(key, item) {
-              item.count = 0;
-              item.volume = Number.parseFloat(item.volume).toFixed(4);
-              item.color = normal_bar_color;
-              item.labelColor = normal_bar_color;
-            })
+            if (data.length == 0) {
+              toastr.warning("There are no data to draw history chart", "Sorry!");
+              data = {
+                dummyValue: 0
+              };
+              histo.panels[0].addLabel(0, '50%', 'The chart contains no data', 'center', 14, 'yellow');
+              histo.dataSets[0].dataProvider = data;
+              histo.validateNow();
+              
+            }else{
+              histo.panels[0].clearLabels();
+              $.each(data, function(key, item) {
+                item.count = 0;
+                item.volume = Number.parseFloat(item.volume).toFixed(4);
+                item.color = normal_bar_color;
+                item.labelColor = normal_bar_color;
+              })
 
-            switch ($('#history_granularity').val()) {
-              case "1440":
-                histo.categoryAxesSettings.minPeriod = "DD";
-                histo.chartScrollbarSettings.usePeriod = "DD";
-                break;
-              case "360":
-                histo.categoryAxesSettings.minPeriod = "6hh";
-                histo.chartScrollbarSettings.usePeriod = "6hh";
-                break;
-              case "60":
-                histo.categoryAxesSettings.minPeriod = "1hh";
-                histo.chartScrollbarSettings.usePeriod = "1hh";
-                break;
-              case "15":
-                histo.categoryAxesSettings.minPeriod = "15mm";
-                histo.chartScrollbarSettings.usePeriod = "15mm";
-                break;
+              switch ($('#history_granularity').val()) {
+                case "1440":
+                  histo.categoryAxesSettings.minPeriod = "DD";
+                  histo.chartScrollbarSettings.usePeriod = "DD";
+                  break;
+                case "360":
+                  histo.categoryAxesSettings.minPeriod = "6hh";
+                  histo.chartScrollbarSettings.usePeriod = "6hh";
+                  break;
+                case "60":
+                  histo.categoryAxesSettings.minPeriod = "1hh";
+                  histo.chartScrollbarSettings.usePeriod = "1hh";
+                  break;
+                case "15":
+                  histo.categoryAxesSettings.minPeriod = "15mm";
+                  histo.chartScrollbarSettings.usePeriod = "15mm";
+                  break;
+              }
+
+//              var stockEvents = [ {
+//                date: new Date(1525132800000),
+//                type: "arrowUp",
+//                backgroundColor: "#00CC00",
+//                graph: "g1",
+//                description: "Highest value"
+//              }, {
+//                date: new Date(1528243200000),
+//                type: "arrowDown",
+//                backgroundColor: "#CC0000",
+//                graph: "g1",
+//                description: "Lowest value"
+//              } ];
+//              histo.dataSets[0].stockEvents = stockEvents;
+              histo.dataSets[0].dataProvider = data;              
+              histo.validateData();
+
             }
-
-//            var stockEvents = [ {
-//              date: new Date(1525132800000),
-//              type: "arrowUp",
-//              backgroundColor: "#00CC00",
-//              graph: "g1",
-//              description: "Highest value"
-//            }, {
-//              date: new Date(1528243200000),
-//              type: "arrowDown",
-//              backgroundColor: "#CC0000",
-//              graph: "g1",
-//              description: "Lowest value"
-//            } ];
-//            histo.dataSets[0].stockEvents = stockEvents;
-            histo.dataSets[0].dataProvider = data;
             
-            histo.validateData();
-//            histo.validateNow();
 
           },
         });
@@ -630,6 +726,8 @@ jQuery(document).ready(
         var selectedRowData = oTable.row({
           selected : true
         }).data();
+        if (selectedRowData == undefined)
+          return;
         startMs = selectedRowData.startMs;
         granularityInMs = $('#time_range_select').val();
         startMs = startMs - granularityInMs * 30;
@@ -656,37 +754,7 @@ jQuery(document).ready(
           },
           success : function(data, res) {
             
-            data = check_data(data, startMs, endMs, 'detail');
-
-            $.each(data, function(key, item) {
-              item.volume = Number.parseFloat(item.volume).toFixed(4);
-              item.count = 0;
-              item.color = normal_bar_color;
-            })
-
-            switch ($('#time_range_select').val()) {
-              case "100":
-                detail.categoryAxesSettings.minPeriod = "100fff";
-                detail.chartScrollbarSettings.usePeriod = "100fff";
-                break;
-              case "1000":
-                detail.categoryAxesSettings.minPeriod = "1ss";
-                detail.chartScrollbarSettings.usePeriod = "1ss";
-                break;
-              case "3000":
-                detail.categoryAxesSettings.minPeriod = "3ss";
-                detail.chartScrollbarSettings.usePeriod = "3ss";
-                break;
-              case "6000":
-                detail.categoryAxesSettings.minPeriod = "6ss";
-                detail.chartScrollbarSettings.usePeriod = "6ss";
-                break;
-            }
-
-            detail.dataSets[0].dataProvider = data;
-            detail.validateData();
-//            detail.validateNow();
-
+            data = check_data(data, startMs, endMs, detail);
           },
         });
         
@@ -761,36 +829,8 @@ jQuery(document).ready(
           },
           success : function(data, res) {
 
-            data = check_data(data, startMs, endMs, 'first compare');
-
-            $.each(data, function(key, item) {
-              item.volume = Number.parseFloat(item.volume).toFixed(4);
-              item.count = 0;
-              item.color = normal_bar_color;
-            })
+            data = check_data(data, startMs, endMs, compare1);            
             
-            switch ($('#time_range_select').val()) {
-              case "100":
-                compare1.categoryAxesSettings.minPeriod = "100fff";
-                compare1.chartScrollbarSettings.usePeriod = "100fff";
-                break;
-              case "1000":
-                compare1.categoryAxesSettings.minPeriod = "1ss";
-                compare1.chartScrollbarSettings.usePeriod = "1ss";
-                break;
-              case "3000":
-                compare1.categoryAxesSettings.minPeriod = "3ss";
-                compare1.chartScrollbarSettings.usePeriod = "3ss";
-                break;
-              case "6000":
-                compare1.categoryAxesSettings.minPeriod = "6ss";
-                compare1.chartScrollbarSettings.usePeriod = "6ss";
-                break;
-            }
-
-            compare1.dataSets[0].dataProvider = data;
-            compare1.validateData();
-//            compare1.validateNow();
           },
         });
 
@@ -827,36 +867,7 @@ jQuery(document).ready(
           },
           success : function(data, res) {
 
-            data = check_data(data, startMs, endMs, 'second compare');
-
-            $.each(data, function(key, item) {
-              item.volume = Number.parseFloat(item.volume).toFixed(4);
-              item.count = 0;
-              item.color = normal_bar_color;
-            })
-
-            switch ($('#time_range_select').val()) {
-              case "100":
-                compare2.categoryAxesSettings.minPeriod = "100fff";
-                compare2.chartScrollbarSettings.usePeriod = "100fff";
-                break;
-              case "1000":
-                compare2.categoryAxesSettings.minPeriod = "1ss";
-                compare2.chartScrollbarSettings.usePeriod = "1ss";
-                break;
-              case "3000":
-                compare2.categoryAxesSettings.minPeriod = "3ss";
-                compare2.chartScrollbarSettings.usePeriod = "3ss";
-                break;
-              case "6000":
-                compare2.categoryAxesSettings.minPeriod = "6ss";
-                compare2.chartScrollbarSettings.usePeriod = "6ss";
-                break;
-            }
-
-            compare2.dataSets[0].dataProvider = data;
-            compare2.validateData();
-//            compare2.validateNow();
+            data = check_data(data, startMs, endMs, compare2);
 
           },
         });
@@ -992,7 +1003,6 @@ jQuery(document).ready(
         }
         
         histo.validateData();
-//        histo.validateNow();
               
       }
       
