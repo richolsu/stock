@@ -1,6 +1,6 @@
-# stock
+# Stock
 Exchange analytics
-===========================
+
  
 # Development with console
 1. mvn spring-boot:run
